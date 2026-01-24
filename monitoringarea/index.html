@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0a0f1c">
+    <meta name="description" content="Monitoring Harga Komoditas Indonesia">
+    <title>🌾 Taniku Monitor</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animate.css">
+</head>
+
+<body>
+    <div class="app-container">
+
+        <!-- ========== TAB 1: DASHBOARD ========== -->
+        <section id="tabDashboard" class="tab-content active">
+            <header class="tab-header">
+                <div class="app-logo">
+                    <img src="https://img.icons8.com/fluency/96/wheat.png" alt="Taniku" class="logo-img">
+                    <div class="logo-info">
+                        <h1 class="logo-title">Taniku Monitor</h1>
+                        <p class="logo-sub">Monitoring Harga Komoditas</p>
+                    </div>
+                </div>
+                <div class="header-timestamp">
+                    <span class="ts-label">📡 Data terbaru:</span>
+                    <span id="liveTimestamp" class="ts-value">--:--:--</span>
+                </div>
+            </header>
+
+            <!-- Quick Stats -->
+            <div class="stats-row">
+                <div class="stat-card green">
+                    <span class="stat-icon">📉</span>
+                    <div class="stat-info">
+                        <p class="stat-label">Termurah</p>
+                        <p id="cheapestItem" class="stat-value">-</p>
+                    </div>
+                </div>
+                <div class="stat-card red">
+                    <span class="stat-icon">📈</span>
+                    <div class="stat-info">
+                        <p class="stat-label">Termahal</p>
+                        <p id="expensiveItem" class="stat-value">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Chart -->
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 id="chartTitle">📊 Grafik Harga</h3>
+                    <select id="chartCommodity" class="commodity-select">
+                        <option value="beras">🍚 Beras</option>
+                        <option value="cabai_merah">🌶️ Cabai</option>
+                        <option value="bawang_merah">🧅 Bawang</option>
+                        <option value="kopi_arabika">☕ Kopi</option>
+                        <option value="gula">🧂 Gula</option>
+                    </select>
+                </div>
+                <div class="time-range-bar">
+                    <button class="time-btn" data-range="1d">1H</button>
+                    <button class="time-btn" data-range="7d">7H</button>
+                    <button class="time-btn active" data-range="1m">1B</button>
+                    <button class="time-btn" data-range="3m">3B</button>
+                    <button class="time-btn" data-range="1y">1T</button>
+                </div>
+                <div class="chart-container">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Top Movers -->
+            <div class="movers-card">
+                <h3>🔥 Pergerakan Harga Hari Ini</h3>
+                <div id="topMovers" class="movers-list"></div>
+            </div>
+        </section>
+
+        <!-- ========== TAB 2: KOMODITAS ========== -->
+        <section id="tabKomoditas" class="tab-content">
+            <header class="tab-header">
+                <h2 class="tab-title" data-i18n="commodities">🌾 Komoditas</h2>
+                <div class="location-badge">
+                    <span class="loc-icon">📍</span>
+                    <span id="locationText">Indonesia</span>
+                </div>
+            </header>
+
+            <div class="category-pills">
+                <button class="pill active" data-cat="komoditas">🌾 Komoditas</button>
+                <button class="pill" data-cat="pupuk">🧪 Pupuk & Racun</button>
+            </div>
+
+            <div class="subcategory-scroll" id="subcategoryScroll">
+                <button class="subcat-chip active" data-sub="all">Semua</button>
+                <button class="subcat-chip" data-sub="bahan_pokok">🍚 Bahan Pokok</button>
+                <button class="subcat-chip" data-sub="sayuran">🥬 Sayuran</button>
+                <button class="subcat-chip" data-sub="buah">🍎 Buah</button>
+                <button class="subcat-chip" data-sub="protein">🥩 Protein</button>
+                <button class="subcat-chip" data-sub="minuman">☕ Minuman</button>
+            </div>
+
+            <div id="commodityGrid" class="commodity-grid"></div>
+
+            <!-- Detail Modal -->
+            <div id="commodityModal" class="modal-overlay hidden">
+                <div class="modal-sheet">
+                    <div class="modal-handle"></div>
+                    <button class="modal-close-btn" id="closeModal">✕</button>
+                    <div class="commodity-detail">
+                        <div class="detail-hero">
+                            <img id="detailIcon" src="" alt="" class="detail-icon">
+                            <div class="detail-info">
+                                <h2 id="detailName">-</h2>
+                                <p id="detailCategory">-</p>
+                            </div>
+                        </div>
+                        <div class="price-display">
+                            <span class="price-label">Harga Saat Ini</span>
+                            <span id="detailPrice" class="price-big">Rp 0</span>
+                            <span id="detailChange" class="price-badge up">+0%</span>
+                        </div>
+                        <div class="mini-chart-container">
+                            <canvas id="detailChart"></canvas>
+                        </div>
+                        <div class="wiki-card">
+                            <h4>📖 Deskripsi</h4>
+                            <p id="wikiText">Memuat...</p>
+                        </div>
+                        <div class="varieties-card">
+                            <h4>🌱 Varietas (20+)</h4>
+                            <div id="varietiesGrid" class="varieties-grid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TAB 3: MAP ========== -->
+        <section id="tabMap" class="tab-content">
+            <header class="tab-header compact">
+                <h2 class="tab-title">🗺️ Peta Harga</h2>
+            </header>
+
+            <div class="map-commodity-select">
+                <label>📦 Komoditas:</label>
+                <select id="mapCommoditySelect" class="form-select">
+                    <option value="all">Semua (IHG Gabungan)</option>
+                    <option value="beras">🍚 Beras</option>
+                    <option value="cabai_merah">🌶️ Cabai Merah</option>
+                    <option value="bawang_merah">🧅 Bawang Merah</option>
+                    <option value="daging_ayam">🍗 Daging Ayam</option>
+                    <option value="telur_ayam">🥚 Telur Ayam</option>
+                </select>
+            </div>
+
+            <div class="ihg-card">
+                <div class="ihg-main">
+                    <span class="ihg-label">📊 IHG</span>
+                    <span id="ihgValue" class="ihg-value">100.00</span>
+                    <span id="ihgChange" class="ihg-change up">+0.5%</span>
+                </div>
+                <div class="ihg-details">
+                    <div class="ihg-item"><span>🌤️</span><span id="weatherInfo">28°C</span></div>
+                    <div class="ihg-item"><span>💱</span><span id="exchangeRate">$1 = Rp15.500</span></div>
+                </div>
+            </div>
+
+            <div class="map-actions">
+                <button id="autoLocBtn" class="map-btn">🎯 Lokasi Saya</button>
+                <button id="searchLocBtn" class="map-btn">🔍 Cari</button>
+            </div>
+
+            <div id="indonesiaMap" class="map-container"></div>
+
+            <div class="map-legend">
+                <div class="legend-row"><span class="legend-dot green"></span><span>Murah</span></div>
+                <div class="legend-row"><span class="legend-dot yellow"></span><span>Sedang</span></div>
+                <div class="legend-row"><span class="legend-dot red"></span><span>Mahal</span></div>
+            </div>
+
+            <div id="provinceCard" class="province-card hidden">
+                <h3 id="provinceName">-</h3>
+                <div class="province-stats">
+                    <div class="prov-stat">
+                        <span class="prov-label">Indeks</span>
+                        <span id="provinceIndex" class="prov-value">100</span>
+                    </div>
+                    <div class="prov-stat">
+                        <span class="prov-label">Status</span>
+                        <span id="provinceStatus" class="prov-badge">Normal</span>
+                    </div>
+                </div>
+                <div id="provinceCommodityPrices" class="prov-prices"></div>
+            </div>
+        </section>
+
+        <!-- ========== TAB 4: KALKULATOR ========== -->
+        <section id="tabCalculator" class="tab-content">
+            <header class="tab-header">
+                <h2 class="tab-title">🧮 Kalkulator Tani</h2>
+            </header>
+
+            <!-- Calculator Tabs -->
+            <div class="calc-tabs">
+                <button class="calc-tab active" data-calc="panen">🌾 Panen</button>
+                <button class="calc-tab" data-calc="pupuk">🧪 Pupuk</button>
+                <button class="calc-tab" data-calc="hama">🐛 Hama</button>
+                <button class="calc-tab" data-calc="biaya">💰 Biaya</button>
+            </div>
+
+            <!-- Panen Calculator -->
+            <div id="calcPanen" class="calc-section active">
+                <div class="calc-card">
+                    <div class="form-group">
+                        <label>🌱 Jenis Tanaman</label>
+                        <select id="calcCrop" class="form-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>📐 Luas Lahan</label>
+                        <div class="input-group">
+                            <input type="number" id="calcArea" class="form-input" placeholder="1000">
+                            <span class="input-addon">m²</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>📅 Tanggal Tanam</label>
+                        <input type="date" id="calcDate" class="form-input">
+                    </div>
+                    <button id="calculateBtn" class="calc-btn"><span>🧮</span> Hitung Panen</button>
+                </div>
+                <div id="calcResults" class="calc-results hidden">
+                    <h3>📊 Hasil Estimasi</h3>
+                    <div class="result-grid">
+                        <div class="result-item"><span class="result-icon">🌾</span><span class="result-label">Hasil
+                                Panen</span><span id="harvestAmount" class="result-value">0 kg</span></div>
+                        <div class="result-item"><span class="result-icon">💰</span><span
+                                class="result-label">Pendapatan</span><span id="revenueAmount" class="result-value">Rp
+                                0</span></div>
+                        <div class="result-item"><span class="result-icon">🧪</span><span class="result-label">Biaya
+                                Pupuk</span><span id="fertilizerCost" class="result-value">Rp 0</span></div>
+                        <div class="result-item"><span class="result-icon">📅</span><span
+                                class="result-label">Panen</span><span id="harvestDate" class="result-value">-</span>
+                        </div>
+                    </div>
+                    <div class="profit-card">
+                        <span class="profit-label">💵 Keuntungan Bersih</span>
+                        <span id="netProfit" class="profit-value">Rp 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pupuk Calculator -->
+            <div id="calcPupuk" class="calc-section">
+                <div class="calc-card">
+                    <h4>🧪 Kalkulator Pupuk</h4>
+                    <div class="form-group">
+                        <label>🌱 Jenis Tanaman</label>
+                        <select id="pupukCrop" class="form-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>📐 Luas Lahan (m²)</label>
+                        <input type="number" id="pupukArea" class="form-input" placeholder="1000">
+                    </div>
+                    <div class="form-group">
+                        <label>🌿 Fase Pertumbuhan</label>
+                        <select id="pupukPhase" class="form-select">
+                            <option value="semai">Semai / Pembibitan</option>
+                            <option value="vegetatif">Vegetatif (Tumbuh)</option>
+                            <option value="generatif">Generatif (Berbunga)</option>
+                            <option value="panen">Menjelang Panen</option>
+                        </select>
+                    </div>
+                    <button id="calcPupukBtn" class="calc-btn"><span>🧪</span> Hitung Kebutuhan</button>
+                </div>
+                <div id="pupukResults" class="calc-results hidden">
+                    <h3>📊 Rekomendasi Pupuk</h3>
+                    <div id="pupukList" class="pupuk-list"></div>
+                </div>
+            </div>
+
+            <!-- Hama Calculator -->
+            <div id="calcHama" class="calc-section">
+                <div class="calc-card">
+                    <h4>🐛 Penanganan Hama & Penyakit</h4>
+                    <div class="form-group">
+                        <label>🌱 Jenis Tanaman</label>
+                        <select id="hamaCrop" class="form-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>🐛 Jenis Hama/Penyakit</label>
+                        <select id="hamaType" class="form-select">
+                            <option value="ulat">🐛 Ulat</option>
+                            <option value="wereng">🦗 Wereng</option>
+                            <option value="kutu">🐜 Kutu Daun</option>
+                            <option value="jamur">🍄 Penyakit Jamur</option>
+                            <option value="busuk">🦠 Busuk Batang</option>
+                            <option value="virus">🧬 Virus/Layu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>📊 Tingkat Serangan</label>
+                        <select id="hamaLevel" class="form-select">
+                            <option value="ringan">🟢 Ringan (&lt;10%)</option>
+                            <option value="sedang">🟡 Sedang (10-25%)</option>
+                            <option value="berat">🔴 Berat (&gt;25%)</option>
+                        </select>
+                    </div>
+                    <button id="calcHamaBtn" class="calc-btn"><span>🐛</span> Cari Solusi</button>
+                </div>
+                <div id="hamaResults" class="calc-results hidden">
+                    <h3>💊 Rekomendasi Penanganan</h3>
+                    <div id="hamaList" class="hama-list"></div>
+                </div>
+            </div>
+
+            <!-- Biaya Calculator -->
+            <div id="calcBiaya" class="calc-section">
+                <div class="calc-card">
+                    <h4>💰 Analisis Biaya Lengkap</h4>
+                    <div class="form-group">
+                        <label>🌱 Jenis Tanaman</label>
+                        <select id="biayaCrop" class="form-select"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>📐 Luas Lahan (Ha)</label>
+                        <input type="number" id="biayaArea" class="form-input" placeholder="1" step="0.1">
+                    </div>
+                    <button id="calcBiayaBtn" class="calc-btn"><span>💰</span> Hitung Biaya</button>
+                </div>
+                <div id="biayaResults" class="calc-results hidden">
+                    <h3>📊 Rincian Biaya per Hektar</h3>
+                    <div id="biayaList" class="biaya-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TAB 5: AI CHATBOT ========== -->
+        <section id="tabChatbot" class="tab-content">
+            <header class="tab-header">
+                <h2 class="tab-title">🤖 AI Asisten Tani</h2>
+            </header>
+
+            <!-- Quick Topics -->
+            <div class="chat-topics">
+                <button class="topic-btn" data-topic="tanaman">🌱 Tanaman</button>
+                <button class="topic-btn" data-topic="hama">🐛 Hama</button>
+                <button class="topic-btn" data-topic="pupuk">🧪 Pupuk</button>
+                <button class="topic-btn" data-topic="tanam">🌾 Cara Tanam</button>
+                <button class="topic-btn" data-topic="harga">💰 Harga</button>
+                <button class="topic-btn" data-topic="cuaca">🌤️ Cuaca</button>
+            </div>
+
+            <!-- Chat Level -->
+            <div class="chat-level-bar">
+                <span>Tingkat:</span>
+                <button class="level-btn active" data-level="dasar">📗 Dasar</button>
+                <button class="level-btn" data-level="menengah">📘 Menengah</button>
+                <button class="level-btn" data-level="tinggi">📕 Tinggi</button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div id="chatMessages" class="chat-messages">
+                <div class="chat-bubble bot">
+                    <div class="bubble-avatar">🤖</div>
+                    <div class="bubble-content">
+                        <p>Halo! Saya AI Asisten Tani. Tanyakan apa saja tentang:</p>
+                        <ul>
+                            <li>🌱 Info tanaman & komoditas</li>
+                            <li>🐛 Penanganan hama</li>
+                            <li>🧪 Pupuk & rabuk</li>
+                            <li>💰 Harga pasar</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Replies -->
+            <div class="quick-replies" id="quickReplies">
+                <button class="quick-btn" data-q="Cara menanam padi">🌾 Cara tanam padi</button>
+                <button class="quick-btn" data-q="Harga beras hari ini">💰 Harga beras</button>
+                <button class="quick-btn" data-q="Pupuk untuk cabai">🧪 Pupuk cabai</button>
+                <button class="quick-btn" data-q="Hama wereng">🐛 Hama wereng</button>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input-bar">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik pertanyaan...">
+                <button id="sendChatBtn" class="chat-send-btn">📤</button>
+            </div>
+        </section>
+
+        <!-- ========== TAB 6: INFO ========== -->
+        <section id="tabInfo" class="tab-content">
+            <header class="tab-header">
+                <h2 class="tab-title">📚 Info Pertanian</h2>
+            </header>
+
+            <div class="info-search-box">
+                <input type="text" id="infoSearch" class="search-input" placeholder="Cari tanaman, hama, pupuk...">
+                <button id="infoSearchBtn" class="search-btn">🔍</button>
+            </div>
+
+            <!-- Info Categories -->
+            <div class="info-categories">
+                <button class="info-cat active" data-info="tanaman">🌱 Tanaman</button>
+                <button class="info-cat" data-info="hama">🐛 Hama</button>
+                <button class="info-cat" data-info="pupuk">🧪 Pupuk</button>
+                <button class="info-cat" data-info="tanam">🌾 Cara Tanam</button>
+            </div>
+
+            <!-- Tanaman Info -->
+            <div id="infoTanaman" class="info-section active">
+                <h3>🌱 Informasi Tanaman (100+ Data)</h3>
+                <div id="plantList" class="info-grid"></div>
+            </div>
+
+            <!-- Hama Info -->
+            <div id="infoHama" class="info-section">
+                <h3>🐛 Database Hama & Penyakit (40+ Data)</h3>
+                <div id="pestList" class="info-grid"></div>
+            </div>
+
+            <!-- Pupuk Info -->
+            <div id="infoPupuk" class="info-section">
+                <h3>🧪 Panduan Pupuk & Rabuk (45+ Data)</h3>
+                <div id="fertilizerList" class="info-grid"></div>
+            </div>
+
+            <!-- Cara Tanam -->
+            <div id="infoTanam" class="info-section">
+                <h3>🌾 Panduan Cara Tanam (25+ Data)</h3>
+                <div id="plantingList" class="info-grid"></div>
+            </div>
+
+            <!-- Info Detail Modal -->
+            <div id="infoModal" class="modal-overlay hidden">
+                <div class="modal-sheet">
+                    <div class="modal-handle"></div>
+                    <button class="modal-close-btn" id="closeInfoModal">✕</button>
+                    <div id="infoModalContent" class="info-detail"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== TAB 6: SETTINGS ========== -->
+        <section id="tabSettings" class="tab-content">
+            <header class="tab-header">
+                <h2 class="tab-title">⚙️ Pengaturan</h2>
+            </header>
+
+            <div class="section-card">
+                <h3 class="section-title">🌐 Pilih Bahasa</h3>
+                <div class="lang-grid">
+                    <button class="lang-card active" data-lang="id"><span class="lang-flag">🇮🇩</span><span
+                            class="lang-name">Indonesia</span></button>
+                    <button class="lang-card" data-lang="jv"><span class="lang-flag">🏛️</span><span
+                            class="lang-name">Jawa</span></button>
+                    <button class="lang-card" data-lang="en"><span class="lang-flag">🇬🇧</span><span
+                            class="lang-name">English</span></button>
+                    <button class="lang-card" data-lang="lp"><span class="lang-flag">🏔️</span><span
+                            class="lang-name">Lampung</span></button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3 class="section-title">🎵 Pemutar Musik</h3>
+                <div class="music-search-box">
+                    <input type="text" id="musicSearch" placeholder="Cari lagu..." class="search-input">
+                    <button id="searchMusicBtn" class="search-btn">🔍</button>
+                </div>
+                <div class="music-player-card">
+                    <div class="player-art"><img id="playerArt"
+                            src="https://img.icons8.com/fluency/96/musical-notes.png" alt="Album"></div>
+                    <div class="player-info">
+                        <p id="musicTitle" class="player-title">Tidak ada musik</p>
+                        <p id="musicArtist" class="player-artist">-</p>
+                    </div>
+                    <div class="player-controls">
+                        <button id="prevBtn" class="player-btn">⏮️</button>
+                        <button id="playPauseBtn" class="player-btn play">▶️</button>
+                        <button id="nextBtn" class="player-btn">⏭️</button>
+                    </div>
+                </div>
+                <div id="musicList" class="music-list"></div>
+                <audio id="audioPlayer"></audio>
+            </div>
+
+            <div class="section-card">
+                <h3 class="section-title">🌍 Data World Bank</h3>
+                <div class="wb-stats" id="worldBankStats">
+                    <div class="wb-item"><span class="wb-icon">📈</span><span class="wb-label">GDP</span><span
+                            id="wbGDP" class="wb-value">-</span></div>
+                    <div class="wb-item"><span class="wb-icon">👥</span><span class="wb-label">Populasi</span><span
+                            id="wbPopulation" class="wb-value">-</span></div>
+                    <div class="wb-item"><span class="wb-icon">🌾</span><span class="wb-label">Agrikultur</span><span
+                            id="wbAgriculture" class="wb-value">-</span></div>
+                </div>
+            </div>
+
+            <!-- AI API Settings -->
+            <div class="section-card">
+                <h3 class="section-title">🤖 Pengaturan AI API</h3>
+
+                <div class="api-setting-group">
+                    <label class="setting-label">Provider AI:</label>
+                    <div class="api-provider-grid">
+                        <button class="api-btn active" data-provider="gemini">
+                            <span class="api-icon">💎</span>
+                            <span class="api-name">Gemini</span>
+                        </button>
+                        <button class="api-btn" data-provider="openai">
+                            <span class="api-icon">🤖</span>
+                            <span class="api-name">ChatGPT</span>
+                        </button>
+                        <button class="api-btn" data-provider="deepseek">
+                            <span class="api-icon">🌊</span>
+                            <span class="api-name">DeepSeek</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="api-setting-group">
+                    <label class="setting-label">API Key:</label>
+                    <div class="api-input-row">
+                        <input type="password" id="aiApiKey" class="form-input" placeholder="Masukkan API Key...">
+                        <button id="toggleApiKey" class="icon-btn">👁️</button>
+                    </div>
+                </div>
+
+                <div class="api-setting-group">
+                    <label class="setting-label">Model:</label>
+                    <select id="aiModel" class="form-select">
+                        <optgroup label="OpenAI (ChatGPT)">
+                            <option value="gpt-5">GPT-5 (Latest)</option>
+                            <option value="gpt-5.1">GPT-5.1</option>
+                            <option value="gpt-4o">GPT-4o</option>
+                            <option value="gpt-4o-mini">GPT-4o Mini</option>
+                            <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                            <option value="o1">O1 (Reasoning)</option>
+                            <option value="o1-mini">O1 Mini</option>
+                        </optgroup>
+                        <optgroup label="Google Gemini">
+                            <option value="gemini-3.0-ultra">Gemini 3.0 Ultra</option>
+                            <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                            <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                            <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+                            <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
+                            <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+                        </optgroup>
+                        <optgroup label="DeepSeek">
+                            <option value="deepseek-r1-0528">DeepSeek R1-0528</option>
+                            <option value="deepseek-v3.1">DeepSeek V3.1</option>
+                            <option value="deepseek-v3">DeepSeek V3</option>
+                            <option value="deepseek-chat">DeepSeek Chat</option>
+                            <option value="deepseek-coder">DeepSeek Coder</option>
+                            <option value="deepseek-reasoner">DeepSeek Reasoner</option>
+                        </optgroup>
+                        <optgroup label="Anthropic Claude">
+                            <option value="claude-4-opus">Claude 4 Opus</option>
+                            <option value="claude-3.5-sonnet">Claude 3.5 Sonnet</option>
+                            <option value="claude-3.5-haiku">Claude 3.5 Haiku</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="api-setting-group">
+                    <label class="setting-label">Custom Model (opsional):</label>
+                    <input type="text" id="customModelName" class="form-input" placeholder="Contoh: gpt-4-0125-preview">
+                </div>
+
+                <button id="saveApiSettings" class="btn-primary">💾 Simpan Pengaturan AI</button>
+                <div id="apiStatus" class="api-status"></div>
+            </div>
+
+            <!-- Server Control Panel -->
+            <div class="section-card">
+                <h3 class="section-title" data-i18n="server_control">🖥️ Kontrol Server Export</h3>
+
+                <div class="server-status-bar">
+                    <span id="serverStatusDot" class="status-dot offline"></span>
+                    <span id="serverStatusText" data-i18n="server_offline">Server: Offline</span>
+                </div>
+
+                <div class="server-buttons">
+                    <button id="startServerBtn" class="btn-server start" onclick="TanikuApp.startServer()">
+                        ▶️ <span data-i18n="start_server">Mulai Server</span>
+                    </button>
+                    <button id="stopServerBtn" class="btn-server stop" onclick="TanikuApp.stopServer()" disabled>
+                        ⏹️ <span data-i18n="stop_server">Hentikan Server</span>
+                    </button>
+                </div>
+
+                <div class="server-info">
+                    <div class="info-row">
+                        <span>📍 URL:</span>
+                        <a href="http://localhost:3000" target="_blank" id="serverUrl">http://localhost:3000</a>
+                    </div>
+                    <div class="info-row">
+                        <span>📁 Port:</span>
+                        <input type="number" id="serverPort" class="port-input" value="3000" min="1000" max="65535">
+                    </div>
+                </div>
+
+                <div class="terminal-container">
+                    <div class="terminal-header">
+                        <span>📟 Terminal Output</span>
+                        <button class="terminal-clear" onclick="TanikuApp.clearTerminal()">🗑️</button>
+                    </div>
+                    <div id="serverTerminal" class="terminal-output">
+                        <div class="terminal-line">Siap menjalankan server...</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 15px 0 10px; font-size: 0.9rem;" data-i18n="quick_download">📥 Download Cepat</h4>
+                <a href="data.html" target="_blank" class="btn-primary"
+                    style="display: block; text-decoration: none; margin-bottom: 10px;">
+                    📊 Buka Halaman Data Export
+                </a>
+                <p style="font-size: 0.75rem; color: rgba(255,255,255,0.5); text-align: center;">
+                    Lihat data real-time & download Excel/JSON/DOCX langsung dari browser
+                </p>
+            </div>
+
+            <div class="section-card">
+                <h3 class="section-title">ℹ️ <span data-i18n="about_app">Tentang Aplikasi</span></h3>
+                <p class="about-text">Taniku Monitor v5.4<br><span data-i18n="about_desc">Monitoring harga komoditas
+                        Indonesia dengan AI, data BPS, World Bank, dan Wikipedia.</span></p>
+            </div>
+        </section>
+
+        <!-- Location Modal -->
+        <div id="locationModal" class="modal-overlay hidden">
+            <div class="modal-sheet small">
+                <div class="modal-handle"></div>
+                <h3>🔍 Cari Lokasi</h3>
+                <input type="text" id="locSearchInput" class="form-input" placeholder="Ketik nama kota...">
+                <div id="locResults" class="loc-results"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <nav class="tab-bar">
+        <button class="tab-item active" data-tab="tabDashboard"><span class="tab-icon">📊</span><span
+                class="tab-label">Home</span></button>
+        <button class="tab-item" data-tab="tabKomoditas"><span class="tab-icon">🌾</span><span
+                class="tab-label">Komoditas</span></button>
+        <button class="tab-item" data-tab="tabMap"><span class="tab-icon">🗺️</span><span
+                class="tab-label">Peta</span></button>
+        <button class="tab-item" data-tab="tabInfo"><span class="tab-icon">📚</span><span
+                class="tab-label">Info</span></button>
+        <button class="tab-item" data-tab="tabCalculator"><span class="tab-icon">🧮</span><span
+                class="tab-label">Hitung</span></button>
+        <button class="tab-item" data-tab="tabChatbot"><span class="tab-icon">🤖</span><span
+                class="tab-label">AI</span></button>
+        <button class="tab-item" data-tab="tabSettings"><span class="tab-icon">⚙️</span><span
+                class="tab-label">Setting</span></button>
+    </nav>
+
+    <!-- Loading -->
+    <div id="loadingOverlay" class="loading-overlay hidden">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">Memuat...</span>
+        </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="api.js"></script>
+    <script src="data.js"></script>
+    <script src="animate.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
