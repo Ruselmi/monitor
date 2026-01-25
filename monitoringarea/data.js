@@ -28,7 +28,10 @@ const CommodityData = {
             search_music: 'Cari musik...',
             no_music: 'Tidak ada musik',
             detecting_location: 'Mendeteksi lokasi...',
-            price_index: 'Indeks Harga'
+            price_index: 'Indeks Harga',
+            no_data: 'Data Tidak Tersedia',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         },
         jv: {
             commodities: 'Komoditas',
@@ -52,7 +55,10 @@ const CommodityData = {
             search_music: 'Goleki musik...',
             no_music: 'Ora ana musik',
             detecting_location: 'Nggoleki lokasi...',
-            price_index: 'Indeks Rego'
+            price_index: 'Indeks Rego',
+            no_data: 'Data Ora Ana',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         },
         en: {
             commodities: 'Commodities',
@@ -76,7 +82,10 @@ const CommodityData = {
             search_music: 'Search music...',
             no_music: 'No music playing',
             detecting_location: 'Detecting location...',
-            price_index: 'Price Index'
+            price_index: 'Price Index',
+            no_data: 'Data Not Available',
+            check_api: 'Check BPS Data',
+            source: 'Source'
         },
         lp: {
             commodities: 'Komoditas',
@@ -100,7 +109,10 @@ const CommodityData = {
             search_music: 'Cari musik...',
             no_music: 'Mak wat musik',
             detecting_location: 'Nyari lokasi...',
-            price_index: 'Indeks Rega'
+            price_index: 'Indeks Rega',
+            no_data: 'Data Mak Wat',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         }
     },
 
@@ -410,8 +422,7 @@ const CommodityData = {
     },
 
     getBasePrice(commodityId) {
-        const commodity = this.getCommodityById(commodityId);
-        return commodity ? commodity.price : null;
+        return null;
     },
 
     getTranslation(key, lang = 'id') {
@@ -428,14 +439,9 @@ const CommodityData = {
 
         const areaHa = areaM2 / 10000;
         const yieldKg = Math.round(commodity.yieldPerHa * areaHa);
-        const revenue = yieldKg * commodity.price;
-        const fertilizerCost = Math.round(areaHa * 2500000); // Approx 2.5M per Ha
-
+        // Revenue is calculated in script.js with user input
         return {
             yield: yieldKg,
-            revenue: revenue,
-            fertilizerCost: fertilizerCost,
-            netProfit: revenue - fertilizerCost,
             harvestDays: commodity.harvestDays
         };
     },
@@ -629,16 +635,8 @@ const CommodityData = {
     },
 
     getPriceComparison(item, type = 'hama') {
-        const db = type === 'hama' ? this.hamaDatabase : this.pupukDatabase;
-        const found = db.find(d => d.id === item);
-        if (!found) return null;
-        return {
-            name: found.name,
-            priceBPS: found.priceBPS,
-            priceWB: found.priceWB,
-            difference: found.priceBPS - found.priceWB,
-            percentDiff: ((found.priceBPS - found.priceWB) / found.priceWB * 100).toFixed(1)
-        };
+        // Feature disabled - strict official data only
+        return null;
     },
 
     searchDatabase(query, type = 'all') {
@@ -683,4 +681,3 @@ console.log('📦 Commodity Data loaded:', CommodityData.commodities.length, 'ko
     CommodityData.hamaDatabase?.length || 0, 'hama,',
     CommodityData.pupukDatabase?.length || 0, 'pupuk,',
     CommodityData.caraTanamDatabase?.length || 0, 'cara tanam');
-
