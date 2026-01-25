@@ -22,7 +22,6 @@ const TanikuApp = {
 
     icons: {
         'default': 'https://img.icons8.com/fluency/96/ingredients.png'
-        // ... (Icons can be dynamically loaded or fallbacked)
     },
 
     async init() {
@@ -33,7 +32,7 @@ const TanikuApp = {
             this.initTabNavigation();
             this.initLanguageSelector();
             this.initCommoditySystem();
-            this.initDashboard(); // Fetches Inflation/GDP
+            this.initDashboard(); // Fetches Inflation/GDP/IHG
             await this.initMap();
             await this.initLocation();
 
@@ -70,39 +69,124 @@ const TanikuApp = {
         }
     },
 
+    // ========== LANGUAGE SELECTOR (ROBUST) ==========
+    initLanguageSelector() {
+        document.querySelectorAll('.lang-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.lang-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                this.setLanguage(card.dataset.lang);
+            });
+        });
+
+        // Initial set
+        const savedLang = localStorage.getItem('tanikuLanguage') || 'id';
+        this.setLanguage(savedLang);
+    },
+
+    setLanguage(lang) {
+        this.state.currentLang = lang;
+        localStorage.setItem('tanikuLanguage', lang);
+
+        // Dictionary
+        const t = CommodityData.translations[lang] || CommodityData.translations.id;
+
+        // Translate Static UI via Data Attributes
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.dataset.i18n;
+            if (t[key]) el.textContent = t[key];
+        });
+
+        // Translate Placeholders
+        document.querySelectorAll('.search-input').forEach(el => {
+            el.placeholder = t.search_music || 'Cari...';
+        });
+
+        // Translate Dynamic Tabs Labels manually if needed
+        const tabMap = {
+            'tabDashboard': t.home,
+            'tabKomoditas': t.commodities,
+            'tabMap': t.map,
+            'tabInfo': t.description,
+            'tabCalculator': t.calculator,
+            'tabChatbot': 'AI',
+            'tabSettings': 'Setting'
+        };
+
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            const id = tab.dataset.tab;
+            if(tabMap[id]) tab.querySelector('.tab-label').textContent = tabMap[id];
+        });
+
+        // Re-render components that contain text
+        if (this.state.currentTab === 'tabKomoditas') this.renderCommodities();
+        this.updateDashboard(); // Refreshes labels
+    },
+
     // ========== DASHBOARD (REAL DATA) ==========
     async initDashboard() {
-        // Fetch Official Data
         this.updateOfficialIndicators();
-
-        // Render Empty/Static Commodity List initially
         this.renderCommodities();
+
+        // Real Exchange Rate
+        const rate = await APIService.fetchExchangeRate('USD');
+        if(rate.idr) {
+            document.getElementById('exchangeRate').textContent = `$1 = ${APIService.formatPrice(rate.idr)}`;
+        }
+
+        // Real Weather (Default Jakarta)
+        const weather = await APIService.fetchWeather(-6.2, 106.8);
+        if(weather && weather.current) {
+            document.getElementById('weatherInfo').textContent = `${APIService.getWeatherIcon(weather.current.weatherCode)} ${weather.current.temp}°C`;
+        }
+    },
+
+    updateDashboard() {
+        // Called on lang change
+        this.updateOfficialIndicators(); // Re-fetch to update label source text if needed? No, just text.
     },
 
     async updateOfficialIndicators() {
-        // Inflation
-        const inflasi = await APIService.fetchInflation();
-        if (inflasi) {
-            document.getElementById('ihgValue').textContent = `${inflasi.value}%`;
-            document.getElementById('ihgChange').textContent = `Sumber: ${inflasi.source} (${inflasi.year})`;
-            document.getElementById('ihgChange').className = 'ihg-change'; // Neutral
+        // IHG / CPI (Real)
+        const ihg = await APIService.fetchIHG();
+        const t = CommodityData.translations[this.state.currentLang];
+
+        if (ihg) {
+            document.getElementById('ihgValue').textContent = ihg.value.toFixed(2);
+            // Translate "Sumber"
+            const sourceText = this.state.currentLang === 'en' ? 'Source' : 'Sumber';
+            document.getElementById('ihgChange').textContent = `${sourceText}: ${ihg.source} (${ihg.year})`;
+
+            // Show change if available
+            if(ihg.change !== undefined) {
+                 // Add small indicator?
+            }
         } else {
             document.getElementById('ihgValue').textContent = '-';
-            document.getElementById('ihgChange').textContent = 'Data Tidak Tersedia';
+            document.getElementById('ihgChange').textContent = t.no_data || 'Data Tidak Tersedia';
         }
 
-        // GDP
+        // Inflation (Real)
+        const inflasi = await APIService.fetchInflation();
+        // Maybe display inflation somewhere else or replace "Termurah" card which is now useless without mock data?
+        // Let's replace "Termurah" with "Inflasi" on the dashboard HTML structure dynamically
+        const cheapCard = document.getElementById('cheapestItem')?.parentElement;
+        if(cheapCard) {
+             cheapCard.querySelector('h3').textContent = 'Inflasi (yoy)';
+             cheapCard.querySelector('.stat-value').textContent = inflasi ? `${inflasi.value}%` : '-';
+             cheapCard.querySelector('.stat-sub').textContent = inflasi ? `${inflasi.source} ${inflasi.year}` : '';
+        }
+
+        // GDP (Real)
         const gdp = await APIService.fetchGDP();
         if (gdp) {
-            document.getElementById('wbGDP').textContent = APIService.formatPrice(gdp.value); // Formats as currency
+            document.getElementById('wbGDP').textContent = APIService.formatPrice(gdp.value);
         } else {
             document.getElementById('wbGDP').textContent = '-';
         }
-
-        // Other WB Data (Population/Agri) could be added here similar to official_data.js pattern
     },
 
-    // ========== COMMODITY SYSTEM ==========
+    // ========== COMMODITY SYSTEM (Real Search) ==========
     initCommoditySystem() {
         document.querySelectorAll('.pill').forEach(pill => {
             pill.addEventListener('click', () => {
@@ -119,14 +203,11 @@ const TanikuApp = {
         if (!container) return;
 
         let items = CommodityData.getCommoditiesByCategory(this.state.currentCategory);
-        // Filter logic if needed
+        const t = CommodityData.translations[this.state.currentLang];
 
         container.innerHTML = items.map((item, i) => {
-            // STRICT: No fake prices. If price is null/undefined in Data, show "Tidak Tersedia"
-            // Note: Data.js prices were stripped. So this will be null.
-            const priceDisplay = APIService.formatPrice(item.price);
-
-            // Icon handling
+            // Check if we have price (likely null initially)
+            const priceDisplay = item.price ? APIService.formatPrice(item.price) : (t.check_api || 'Cek Data BPS');
             const iconUrl = this.icons[item.id] || this.icons.default;
 
             return `
@@ -140,7 +221,7 @@ const TanikuApp = {
                     </div>
                     <div class="unit">per ${item.unit}</div>
                     <div style="font-size: 0.7rem; color: #666; margin-top: 5px;">
-                        Data Resmi: ${item.price ? 'BPS/WB' : 'Tidak Tersedia'}
+                        ${t.source || 'Sumber'}: BPS
                     </div>
                 </div>
             `;
@@ -154,43 +235,88 @@ const TanikuApp = {
         const modal = document.getElementById('commodityModal');
         modal?.classList.remove('hidden');
 
+        // Reset View
         document.getElementById('detailName').textContent = item.name;
-        document.getElementById('detailPrice').textContent = APIService.formatPrice(item.price);
+        document.getElementById('detailPrice').textContent = 'Memuat Data BPS...';
 
-        // Real Wikipedia Data
+        // REAL TIME FETCH on click
+        const realData = await APIService.fetchCommodityPrice(item.name);
+
+        if(realData && realData.sourceUrl) {
+             document.getElementById('detailPrice').innerHTML = `<a href="${realData.sourceUrl}" target="_blank" style="color:var(--accent);text-decoration:underline;font-size:1rem;">Lihat Tabel BPS</a>`;
+        } else {
+             document.getElementById('detailPrice').textContent = 'Data Spesifik Tidak Ditemukan di API Publik BPS';
+        }
+
+        // Wikipedia
         const wikiText = document.getElementById('wikiText');
-        wikiText.textContent = 'Memuat data resmi...';
+        wikiText.textContent = 'Memuat...';
         const wiki = await APIService.fetchWikiSummary(item.name);
         wikiText.textContent = wiki.extract;
 
-        // Clear charts (No mock data)
+        // Charts removed (No fake data)
         const ctx = document.getElementById('detailChart');
         if (this.state.detailChart) this.state.detailChart.destroy();
-        // We could display a message "Grafik historis tidak tersedia dari BPS"
     },
 
-    // ========== MAP ==========
+    // ========== CALCULATOR (Real Input) ==========
+    initCalculator() {
+        const cropSelect = document.getElementById('calcCrop');
+        if (!cropSelect) return;
+
+        const crops = CommodityData.commodities.filter(c => c.yieldPerHa > 0);
+        cropSelect.innerHTML = '<option value="">-- Pilih --</option>' +
+            crops.map(c => `<option value="${c.id}">${c.icon} ${c.name}</option>`).join('');
+
+        document.getElementById('calculateBtn')?.addEventListener('click', () => this.calculate());
+    },
+
+    calculate() {
+        const cropId = document.getElementById('calcCrop')?.value;
+        const area = parseFloat(document.getElementById('calcArea')?.value) || 0;
+
+        // ASK FOR PRICE
+        const priceInput = prompt("Masukkan harga estimasi per kg (Rp):", "10000");
+        const price = parseFloat(priceInput);
+
+        if (!cropId || !area || isNaN(price)) {
+            alert('Mohon lengkapi data dan harga yang valid.');
+            return;
+        }
+
+        const result = CommodityData.calculateHarvest(cropId, area);
+        if (!result) return;
+
+        // Recalculate with user price
+        result.revenue = result.yield * price;
+        result.netProfit = result.revenue - result.fertilizerCost;
+
+        const resultsEl = document.getElementById('calcResults');
+        resultsEl.classList.remove('hidden');
+
+        document.getElementById('harvestAmount').textContent = APIService.formatNumber(result.yield) + ' kg';
+        document.getElementById('revenueAmount').textContent = APIService.formatPrice(result.revenue);
+        document.getElementById('fertilizerCost').textContent = APIService.formatPrice(result.fertilizerCost);
+        document.getElementById('netProfit').textContent = APIService.formatPrice(result.netProfit);
+    },
+
+    // ========== MAP (Real Admin Only) ==========
     async initMap() {
         const mapContainer = document.getElementById('indonesiaMap');
         if (!mapContainer) return;
 
-        this.state.map = L.map('indonesiaMap', {
-            center: [-2.5, 118],
-            zoom: 4
-        });
+        this.state.map = L.map('indonesiaMap', { center: [-2.5, 118], zoom: 4 });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.state.map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'OpenStreetMap'
-        }).addTo(this.state.map);
-
-        // Load GeoJSON if available
+        // Only load Province GeoJSON (Official Admin Map)
         try {
              const response = await fetch('https://raw.githubusercontent.com/superpikar/indonesia-geojson/master/indonesia-province-simple.json');
              const geojson = await response.json();
              L.geoJSON(geojson, {
-                 style: { fillColor: '#22c55e', weight: 1, color: 'white', fillOpacity: 0.5 },
+                 style: { fillColor: '#22c55e', weight: 1, color: 'white', fillOpacity: 0.4 },
                  onEachFeature: (feature, layer) => {
-                     layer.bindPopup(feature.properties.Propinsi);
+                     // No fake index. Just name.
+                     layer.bindPopup(`<b>${feature.properties.Propinsi}</b><br>Wilayah Administratif Indonesia`);
                  }
              }).addTo(this.state.map);
         } catch(e) {}
@@ -199,19 +325,8 @@ const TanikuApp = {
     async initLocation() {
         try {
             const loc = await APIService.getCurrentLocation();
-            if(loc && loc.address) {
-                document.getElementById('locationText').textContent = loc.address.split(',')[0];
-            }
+            if(loc && loc.address) document.getElementById('locationText').textContent = loc.address.split(',')[0];
         } catch(e) {}
-    },
-
-    // ========== LANGUAGE & EXTRAS ==========
-    initLanguageSelector() {
-        // Simplified
-    },
-
-    initMusicPlayer() {
-        // Optional: Keep existing if user wants
     }
 };
 
