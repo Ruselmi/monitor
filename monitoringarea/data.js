@@ -405,7 +405,7 @@ const CommodityData = {
         return types.slice(0, 20).map((type, i) => ({
             id: `${commodityId}_${i}`,
             name: `${commodity.name} ${type}`,
-            price: null
+
         }));
     },
 
