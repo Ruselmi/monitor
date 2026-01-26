@@ -1,6 +1,6 @@
 /* ================================================
-   TANIKU MONITOR - API SERVICE LAYER
-   BPS, Wikipedia, iTunes, Geolocation APIs
+   TANIKU MONITOR - API SERVICE LAYER (STRICT OFFICIAL)
+   BPS Indonesia & World Bank Open Data
    ================================================ */
 
 const APIService = {
@@ -8,355 +8,259 @@ const APIService = {
     config: {
         bpsApiKey: 'e11b132228efeb1fa7693a7dad9709ce',
         bpsBaseUrl: 'https://webapi.bps.go.id/v1/api',
+        wbBaseUrl: 'https://api.worldbank.org/v2',
         wikiBaseUrl: 'https://id.wikipedia.org/api/rest_v1',
-        wikiEnUrl: 'https://en.wikipedia.org/api/rest_v1',
-        itunesBaseUrl: 'https://itunes.apple.com',
         nominatimUrl: 'https://nominatim.openstreetmap.org'
     },
 
-    // ========== BPS API ==========
-    // Domains: https://webapi.bps.go.id/
-    // 0000 = Nasional, 3100 = Jakarta, etc.
-
-    async fetchBPSDomains() {
+    // ========== CORE FETCHING ==========
+    async fetchJson(url) {
         try {
-            const url = `${this.config.bpsBaseUrl}/domain/type/all/key/${this.config.bpsApiKey}/`;
             const response = await fetch(url);
-            const data = await response.json();
-            return data.data || [];
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return await response.json();
         } catch (error) {
-            console.error('BPS Domains fetch error:', error);
-            return this.getMockBPSDomains();
-        }
-    },
-
-    async fetchBPSVariables(domain = '0000') {
-        try {
-            const url = `${this.config.bpsBaseUrl}/list/model/var/domain/${domain}/key/${this.config.bpsApiKey}/`;
-            const response = await fetch(url);
-            const data = await response.json();
-            return data.data || [];
-        } catch (error) {
-            console.error('BPS Variables fetch error:', error);
-            return [];
-        }
-    },
-
-    async fetchBPSData(params = {}) {
-        const { domain = '0000', var: varId, turvar, th, turth } = params;
-        try {
-            let url = `${this.config.bpsBaseUrl}/list/model/data/domain/${domain}/key/${this.config.bpsApiKey}/`;
-            if (varId) url += `var/${varId}/`;
-            if (turvar) url += `turvar/${turvar}/`;
-            if (th) url += `th/${th}/`;
-            if (turth) url += `turth/${turth}/`;
-
-            const response = await fetch(url);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('BPS Data fetch error:', error);
+            console.error(`Fetch error for ${url}:`, error);
             return null;
         }
     },
 
-    async fetchBPSPriceData(commodityId, province = '0000') {
+    // ========== IHG / CPI (Consumer Price Index) ==========
+    async fetchIHG() {
+        // We use CPI (Indeks Harga Konsumen) as a proxy for IHG if specific commodity index isn't available
+        // 1. Try BPS (Subject 3 = Inflasi/IHK)
         try {
-            // BPS price data endpoint (simulated structure)
-            const url = `${this.config.bpsBaseUrl}/list/model/statictable/domain/${province}/key/${this.config.bpsApiKey}/`;
-            const response = await fetch(url);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('BPS Price fetch error:', error);
-            return this.generateMockPriceData(commodityId);
-        }
-    },
+            // Search for "IHK" variable (Indeks Harga Konsumen)
+            // Subject 3 is Inflasi
+            const searchUrl = `${this.config.bpsBaseUrl}/list/model/var/domain/0000/subject/3/key/${this.config.bpsApiKey}/`;
+            const searchData = await this.fetchJson(searchUrl);
 
-    getMockBPSDomains() {
-        return [
-            { domain_id: '0000', domain_name: 'Indonesia' },
-            { domain_id: '1100', domain_name: 'Aceh' },
-            { domain_id: '1200', domain_name: 'Sumatera Utara' },
-            { domain_id: '1300', domain_name: 'Sumatera Barat' },
-            { domain_id: '1400', domain_name: 'Riau' },
-            { domain_id: '1500', domain_name: 'Jambi' },
-            { domain_id: '1600', domain_name: 'Sumatera Selatan' },
-            { domain_id: '1700', domain_name: 'Bengkulu' },
-            { domain_id: '1800', domain_name: 'Lampung' },
-            { domain_id: '1900', domain_name: 'Kep. Bangka Belitung' },
-            { domain_id: '2100', domain_name: 'Kepulauan Riau' },
-            { domain_id: '3100', domain_name: 'DKI Jakarta' },
-            { domain_id: '3200', domain_name: 'Jawa Barat' },
-            { domain_id: '3300', domain_name: 'Jawa Tengah' },
-            { domain_id: '3400', domain_name: 'DI Yogyakarta' },
-            { domain_id: '3500', domain_name: 'Jawa Timur' },
-            { domain_id: '3600', domain_name: 'Banten' },
-            { domain_id: '5100', domain_name: 'Bali' },
-            { domain_id: '5200', domain_name: 'Nusa Tenggara Barat' },
-            { domain_id: '5300', domain_name: 'Nusa Tenggara Timur' },
-            { domain_id: '6100', domain_name: 'Kalimantan Barat' },
-            { domain_id: '6200', domain_name: 'Kalimantan Tengah' },
-            { domain_id: '6300', domain_name: 'Kalimantan Selatan' },
-            { domain_id: '6400', domain_name: 'Kalimantan Timur' },
-            { domain_id: '6500', domain_name: 'Kalimantan Utara' },
-            { domain_id: '7100', domain_name: 'Sulawesi Utara' },
-            { domain_id: '7200', domain_name: 'Sulawesi Tengah' },
-            { domain_id: '7300', domain_name: 'Sulawesi Selatan' },
-            { domain_id: '7400', domain_name: 'Sulawesi Tenggara' },
-            { domain_id: '7500', domain_name: 'Gorontalo' },
-            { domain_id: '7600', domain_name: 'Sulawesi Barat' },
-            { domain_id: '8100', domain_name: 'Maluku' },
-            { domain_id: '8200', domain_name: 'Maluku Utara' },
-            { domain_id: '9100', domain_name: 'Papua Barat' },
-            { domain_id: '9400', domain_name: 'Papua' }
-        ];
-    },
+            if (searchData && (searchData.data || searchData.data[1])) {
+                const list = Array.isArray(searchData.data) ? searchData.data : searchData.data[1];
+                // Find "Indeks Harga Konsumen" (general index)
+                const found = list.find(v => v.label.toLowerCase().includes('indeks harga konsumen') && !v.label.toLowerCase().includes('kelompok'));
 
-    // ========== WIKIPEDIA API ==========
-    async fetchWikiSummary(title, lang = 'id') {
-        try {
-            const baseUrl = lang === 'en' ? this.config.wikiEnUrl : this.config.wikiBaseUrl;
-            const encodedTitle = encodeURIComponent(title);
-            const url = `${baseUrl}/page/summary/${encodedTitle}`;
+                if (found) {
+                    const dataUrl = `${this.config.bpsBaseUrl}/list/model/data/domain/0000/var/${found.val}/key/${this.config.bpsApiKey}/`;
+                    const result = await this.fetchJson(dataUrl);
+                    if (result && result['data-availability'] === 'available' && result.datacontent) {
+                        const keys = Object.keys(result.datacontent).sort();
+                        const latestKey = keys.pop();
+                        const prevKey = keys.pop();
+                        const current = result.datacontent[latestKey];
+                        const prev = result.datacontent[prevKey];
 
-            const response = await fetch(url, {
-                headers: { 'Accept': 'application/json' }
-            });
-
-            if (!response.ok) {
-                throw new Error('Wiki article not found');
+                        return {
+                            value: current,
+                            change: prev ? ((current - prev) / prev * 100) : 0,
+                            source: 'BPS Indonesia (IHK)',
+                            year: 'Terbaru'
+                        };
+                    }
+                }
             }
+        } catch (e) {
+            console.log('BPS IHG failed, trying WB...');
+        }
 
-            const data = await response.json();
+        // 2. Try World Bank (FP.CPI.TOTL)
+        try {
+            const wbUrl = `${this.config.wbBaseUrl}/country/id/indicator/FP.CPI.TOTL?format=json&per_page=2`;
+            const wbData = await this.fetchJson(wbUrl);
+            if (wbData && wbData[1] && wbData[1].length >= 1) {
+                const current = wbData[1][0].value;
+                const prev = wbData[1][1] ? wbData[1][1].value : current;
+
+                return {
+                    value: current,
+                    change: ((current - prev) / prev * 100),
+                    source: 'World Bank (CPI)',
+                    year: wbData[1][0].date
+                };
+            }
+        } catch (e) {
+            console.log('WB IHG failed');
+        }
+
+        return null;
+    },
+
+    // ========== INFLATION (BPS -> WB) ==========
+    async fetchInflation() {
+        // 1. Try BPS (Subject 3 = Inflasi)
+        try {
+            const searchUrl = `${this.config.bpsBaseUrl}/list/model/var/domain/0000/subject/3/key/${this.config.bpsApiKey}/`;
+            const searchData = await this.fetchJson(searchUrl);
+
+            if (searchData && (searchData.data || searchData.data[1])) {
+                const list = Array.isArray(searchData.data) ? searchData.data : searchData.data[1];
+                // "Inflasi Umum" usually
+                const found = list.find(v => v.label.toLowerCase().includes('inflasi umum') || v.label.toLowerCase() === 'inflasi');
+
+                if (found) {
+                    const dataUrl = `${this.config.bpsBaseUrl}/list/model/data/domain/0000/var/${found.val}/key/${this.config.bpsApiKey}/`;
+                    const result = await this.fetchJson(dataUrl);
+                    if (result && result.datacontent) {
+                        const keys = Object.keys(result.datacontent).sort();
+                        const latestKey = keys.pop();
+                        return {
+                            value: result.datacontent[latestKey],
+                            source: 'BPS Indonesia',
+                            year: 'Terbaru'
+                        };
+                    }
+                }
+            }
+        } catch (e) {}
+
+        // 2. Try World Bank (FP.CPI.TOTL.ZG)
+        try {
+            const wbUrl = `${this.config.wbBaseUrl}/country/id/indicator/FP.CPI.TOTL.ZG?format=json&per_page=1`;
+            const wbData = await this.fetchJson(wbUrl);
+            if (wbData && wbData[1] && wbData[1][0]) {
+                return {
+                    value: wbData[1][0].value,
+                    source: 'World Bank Open Data',
+                    year: wbData[1][0].date
+                };
+            }
+        } catch (e) {}
+
+        return null;
+    },
+
+    // ========== GDP (BPS -> WB) ==========
+    async fetchGDP() {
+        // WB is usually cleaner for GDP
+        try {
+            const wbUrl = `${this.config.wbBaseUrl}/country/id/indicator/NY.GDP.MKTP.CN?format=json&per_page=1`; // LCU (Rupiah)
+            const wbData = await this.fetchJson(wbUrl);
+            if (wbData && wbData[1] && wbData[1][0]) {
+                return {
+                    value: wbData[1][0].value,
+                    source: 'World Bank Open Data',
+                    year: wbData[1][0].date
+                };
+            }
+        } catch (e) {}
+        return null;
+    },
+
+    // ========== COMMODITY PRICES (Strict Real) ==========
+    async fetchCommodityPrice(commodityName) {
+        // We try to search BPS Static Tables for specific commodity strings
+        // This is a "best effort" search.
+        try {
+            const keywords = ['harga', 'rata-rata', commodityName.toLowerCase()];
+            // Note: BPS Static Table search isn't query-based in v1 API, it lists tables.
+            // We fetch the list of tables for "Harga Produsen" or "Harga Konsumen" subject.
+            // Subject 12 = Harga Produsen, Subject 13 = Harga Konsumen
+
+            // Let's try Subject 13 (Consumer Prices)
+            const url = `${this.config.bpsBaseUrl}/list/model/statictable/domain/0000/subject/13/key/${this.config.bpsApiKey}/`;
+            const response = await this.fetchJson(url);
+
+            if (response && (response.data || response.data[1])) {
+                const list = Array.isArray(response.data) ? response.data : response.data[1];
+                const found = list.find(t => t.title.toLowerCase().includes(commodityName.toLowerCase()));
+
+                if (found) {
+                    return {
+                        price: null, // Static tables are HTML/Excel, we can't parse value easily in frontend JS without scraping.
+                        // But we return the link as "Available Source"
+                        sourceUrl: found.excel || found.pdf || null,
+                        sourceName: 'BPS Tabel Statis'
+                    };
+                }
+            }
+        } catch (e) {}
+        return null;
+    },
+
+    // ========== WIKIPEDIA ==========
+    async fetchWikiSummary(title) {
+        try {
+            const url = `${this.config.wikiBaseUrl}/page/summary/${encodeURIComponent(title)}`;
+            const data = await this.fetchJson(url);
             return {
                 title: data.title,
-                extract: data.extract,
-                thumbnail: data.thumbnail?.source || null,
-                url: data.content_urls?.desktop?.page || null
+                extract: data.extract || 'Deskripsi tidak tersedia.',
+                thumbnail: data.thumbnail?.source || null
             };
-        } catch (error) {
-            console.error('Wikipedia fetch error:', error);
-            return this.getDefaultWikiContent(title);
+        } catch (e) {
+            return { title: title, extract: 'Info tidak tersedia.', thumbnail: null };
         }
     },
 
-    async searchWiki(query, lang = 'id') {
+    // ========== WEATHER (OpenMeteo - Official Free) ==========
+    async fetchWeather(lat, lng) {
         try {
-            const baseUrl = lang === 'en'
-                ? 'https://en.wikipedia.org/w/api.php'
-                : 'https://id.wikipedia.org/w/api.php';
-
-            const params = new URLSearchParams({
-                action: 'query',
-                list: 'search',
-                srsearch: query,
-                format: 'json',
-                origin: '*'
-            });
-
-            const response = await fetch(`${baseUrl}?${params}`);
-            const data = await response.json();
-            return data.query?.search || [];
-        } catch (error) {
-            console.error('Wiki search error:', error);
-            return [];
-        }
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current_weather=true`;
+            const data = await this.fetchJson(url);
+            if (data && data.current_weather) {
+                return {
+                    current: {
+                        temp: data.current_weather.temperature,
+                        weatherCode: data.current_weather.weathercode
+                    }
+                };
+            }
+        } catch(e) {}
+        return null;
     },
 
-    getDefaultWikiContent(title) {
-        return {
-            title: title,
-            extract: `${title} adalah salah satu komoditas penting di Indonesia. Informasi lebih lanjut sedang dimuat...`,
-            thumbnail: null,
-            url: null
-        };
+    getWeatherIcon(code) {
+        if (code === 0) return '☀️';
+        if (code < 3) return '⛅';
+        if (code < 50) return '🌫️';
+        if (code < 80) return '🌧️';
+        return '⛈️';
     },
 
-    // ========== ITUNES API ==========
-    async searchMusic(query, limit = 20) {
-        try {
-            const params = new URLSearchParams({
-                term: query,
-                media: 'music',
-                entity: 'song',
-                limit: limit,
-                country: 'ID'
-            });
-
-            const url = `${this.config.itunesBaseUrl}/search?${params}`;
-            const response = await fetch(url);
-            const data = await response.json();
-
-            return data.results.map(track => ({
-                id: track.trackId,
-                name: track.trackName,
-                artist: track.artistName,
-                album: track.collectionName,
-                artwork: track.artworkUrl100?.replace('100x100', '300x300'),
-                previewUrl: track.previewUrl,
-                duration: track.trackTimeMillis,
-                genre: track.primaryGenreName
-            }));
-        } catch (error) {
-            console.error('iTunes search error:', error);
-            return [];
-        }
+    // ========== EXCHANGE RATE (ExchangeRate-API) ==========
+    async fetchExchangeRate(currency) {
+         try {
+             const url = `https://api.exchangerate-api.com/v4/latest/${currency}`;
+             const data = await this.fetchJson(url);
+             if (data && data.rates && data.rates.IDR) {
+                 return { idr: data.rates.IDR };
+             }
+         } catch(e) {}
+         return { idr: null };
     },
 
-    // ========== GEOLOCATION API ==========
+    // ========== GEOLOCATION ==========
     async getCurrentLocation() {
-        return new Promise((resolve, reject) => {
+         return new Promise((resolve, reject) => {
             if (!navigator.geolocation) {
                 reject(new Error('Geolocation not supported'));
                 return;
             }
-
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-                    try {
-                        const address = await this.reverseGeocode(latitude, longitude);
-                        resolve({
-                            lat: latitude,
-                            lng: longitude,
-                            address: address
-                        });
-                    } catch (e) {
-                        resolve({
-                            lat: latitude,
-                            lng: longitude,
-                            address: 'Lokasi Anda'
-                        });
-                    }
+                    const address = await this.reverseGeocode(latitude, longitude);
+                    resolve({ lat: latitude, lng: longitude, address });
                 },
-                (error) => {
-                    reject(error);
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 300000
-                }
+                (err) => reject(err),
+                { timeout: 10000 }
             );
         });
     },
 
     async reverseGeocode(lat, lng) {
         try {
-            const params = new URLSearchParams({
-                lat: lat,
-                lon: lng,
-                format: 'json',
-                'accept-language': 'id'
-            });
-
-            const url = `${this.config.nominatimUrl}/reverse?${params}`;
-            const response = await fetch(url, {
-                headers: {
-                    'User-Agent': 'TanikuMonitor/1.0'
-                }
-            });
-
-            const data = await response.json();
-            const addr = data.address;
-
-            // Format Indonesian address
-            const parts = [];
-            if (addr.village || addr.suburb) parts.push(addr.village || addr.suburb);
-            if (addr.city || addr.town || addr.county) parts.push(addr.city || addr.town || addr.county);
-            if (addr.state) parts.push(addr.state);
-
-            return parts.join(', ') || data.display_name;
-        } catch (error) {
-            console.error('Reverse geocode error:', error);
+            const url = `${this.config.nominatimUrl}/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=id`;
+            const data = await this.fetchJson(url);
+            return data.display_name || 'Lokasi tidak diketahui';
+        } catch (e) {
             return 'Lokasi tidak diketahui';
         }
     },
 
-    async searchLocation(query) {
-        try {
-            const params = new URLSearchParams({
-                q: query + ', Indonesia',
-                format: 'json',
-                limit: 10,
-                'accept-language': 'id',
-                countrycodes: 'id'
-            });
-
-            const url = `${this.config.nominatimUrl}/search?${params}`;
-            const response = await fetch(url, {
-                headers: {
-                    'User-Agent': 'TanikuMonitor/1.0'
-                }
-            });
-
-            const data = await response.json();
-            return data.map(item => ({
-                name: item.display_name,
-                lat: parseFloat(item.lat),
-                lng: parseFloat(item.lon),
-                type: item.type
-            }));
-        } catch (error) {
-            console.error('Location search error:', error);
-            return [];
-        }
-    },
-
-    // ========== PRICE DATA GENERATION ==========
-    generateMockPriceData(commodityId, timeRange = '1m') {
-        const basePrice = CommodityData.getBasePrice(commodityId);
-        const points = this.getDataPoints(timeRange);
-        const volatility = 0.05; // 5% volatility
-
-        const data = [];
-        let currentPrice = basePrice;
-        const now = new Date();
-
-        for (let i = points; i >= 0; i--) {
-            const date = this.getDateForPoint(now, timeRange, i);
-            const change = (Math.random() - 0.5) * 2 * volatility * basePrice;
-            currentPrice = Math.max(basePrice * 0.7, Math.min(basePrice * 1.3, currentPrice + change));
-
-            data.push({
-                date: date,
-                price: Math.round(currentPrice),
-                volume: Math.floor(Math.random() * 1000) + 100
-            });
-        }
-
-        return data;
-    },
-
-    getDataPoints(timeRange) {
-        const ranges = {
-            '10y': 120, '5y': 60, '3y': 36, '2y': 24, '1y': 12,
-            '12m': 12, '6m': 6, '5m': 5, '4m': 4, '3m': 3, '2m': 2, '1m': 30,
-            '30d': 30, '15d': 15, '7d': 7, '6d': 6, '3d': 3, '1d': 24,
-            '24h': 24, '6h': 6, '1h': 6
-        };
-        return ranges[timeRange] || 30;
-    },
-
-    getDateForPoint(now, timeRange, index) {
-        const date = new Date(now);
-
-        if (timeRange.endsWith('y')) {
-            date.setMonth(date.getMonth() - index);
-        } else if (timeRange.endsWith('m') && !timeRange.endsWith('1m')) {
-            date.setMonth(date.getMonth() - index);
-        } else if (timeRange === '1m' || timeRange.endsWith('d')) {
-            date.setDate(date.getDate() - index);
-        } else if (timeRange.endsWith('h')) {
-            date.setHours(date.getHours() - index);
-        }
-
-        return date;
-    },
-
-    // ========== UTILITY METHODS ==========
+    // ========== FORMATTING ==========
     formatPrice(price) {
+        if (price === null || price === undefined || isNaN(price)) return 'Tidak Tersedia';
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
             currency: 'IDR',
@@ -365,23 +269,16 @@ const APIService = {
         }).format(price);
     },
 
-    formatDate(date, format = 'short') {
-        const options = format === 'short'
-            ? { day: 'numeric', month: 'short' }
-            : { day: 'numeric', month: 'long', year: 'numeric' };
-
-        return new Intl.DateTimeFormat('id-ID', options).format(date);
+    formatNumber(num) {
+         if (num === null || num === undefined || isNaN(num)) return '-';
+         return new Intl.NumberFormat('id-ID').format(num);
     },
 
-    formatTime(date) {
-        return new Intl.DateTimeFormat('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit'
-        }).format(date);
+    formatDate(dateStr) {
+        if (!dateStr) return '-';
+        return new Date(dateStr).toLocaleDateString('id-ID');
     }
 };
 
-// Export for use in other modules
 window.APIService = APIService;
-
-console.log('📡 API Service initialized');
+console.log('📡 Strict Official API Service initialized');

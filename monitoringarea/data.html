@@ -299,14 +299,14 @@
     <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="loading-spinner"></div>
-        <div class="loading-text">Mengambil data dari API...</div>
-        <div class="loading-progress" id="loadingProgress">Memuat komoditas...</div>
+        <div class="loading-text">Mengambil data resmi dari BPS...</div>
+        <div class="loading-progress" id="loadingProgress">Memuat metadata...</div>
     </div>
 
     <div class="container">
         <header>
             <h1>📊 Taniku Data Export</h1>
-            <p class="subtitle">Data komoditas real-time dari BPS, World Bank & Wikipedia • 7 hari terakhir</p>
+            <p class="subtitle">Data komoditas resmi (Metadata) • BPS Indonesia</p>
         </header>
 
         <!-- Toolbar -->
@@ -318,9 +318,7 @@
                 <button class="filter-btn" data-filter="hama">🐛 Pestisida</button>
             </div>
             <div class="download-group">
-                <button class="download-btn excel" onclick="downloadExcel()">📊 Excel (CSV)</button>
-                <button class="download-btn json" onclick="downloadJSON()">📄 JSON</button>
-                <button class="download-btn doc" onclick="downloadDoc()">📝 DOCX</button>
+                <button class="download-btn excel" onclick="downloadExcel()">📊 Metadata (CSV)</button>
             </div>
         </div>
 
@@ -331,15 +329,11 @@
                 <div class="stat-label">Total Item</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="avgPrice">Rp 0</div>
-                <div class="stat-label">Harga Rata-rata</div>
-            </div>
-            <div class="stat-card">
                 <div class="stat-value" id="lastUpdate">-</div>
                 <div class="stat-label">Update Terakhir</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value" id="dataSource">3</div>
+                <div class="stat-value" id="dataSource">BPS</div>
                 <div class="stat-label">Sumber Data</div>
             </div>
         </div>
@@ -347,7 +341,7 @@
         <!-- Data Table -->
         <div class="table-container">
             <div class="table-header">
-                <span class="table-title">📋 Data Komoditas (7 Hari Terakhir)</span>
+                <span class="table-title">📋 Metadata Komoditas</span>
                 <span class="loading-status" id="loadingStatus">✅ Data siap</span>
             </div>
             <div class="table-scroll">
@@ -358,14 +352,7 @@
                             <th>Nama</th>
                             <th>Kategori</th>
                             <th>Unit</th>
-                            <th>Harga Hari Ini</th>
-                            <th>Hari -1</th>
-                            <th>Hari -2</th>
-                            <th>Hari -3</th>
-                            <th>Hari -4</th>
-                            <th>Hari -5</th>
-                            <th>Hari -6</th>
-                            <th>Perubahan</th>
+                            <th>Sumber Data</th>
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
@@ -376,136 +363,54 @@
         </div>
     </div>
 
+    <script src="data.js"></script>
     <script>
         // ========== DATA STORAGE ==========
         let allData = [];
         let currentFilter = 'all';
 
-        // Commodity database
-        const commodityData = {
-            tanaman: [
-                { id: 'beras', name: 'Beras', unit: 'kg', price: 15000, icon: '🌾', category: 'pangan' },
-                { id: 'jagung', name: 'Jagung', unit: 'kg', price: 6500, icon: '🌽', category: 'pangan' },
-                { id: 'kedelai', name: 'Kedelai', unit: 'kg', price: 12000, icon: '🫘', category: 'pangan' },
-                { id: 'cabai_merah', name: 'Cabai Merah', unit: 'kg', price: 45000, icon: '🌶️', category: 'sayuran' },
-                { id: 'cabai_rawit', name: 'Cabai Rawit', unit: 'kg', price: 55000, icon: '🌶️', category: 'sayuran' },
-                { id: 'bawang_merah', name: 'Bawang Merah', unit: 'kg', price: 35000, icon: '🧅', category: 'sayuran' },
-                { id: 'bawang_putih', name: 'Bawang Putih', unit: 'kg', price: 32000, icon: '🧄', category: 'sayuran' },
-                { id: 'kentang', name: 'Kentang', unit: 'kg', price: 12000, icon: '🥔', category: 'sayuran' },
-                { id: 'tomat', name: 'Tomat', unit: 'kg', price: 8500, icon: '🍅', category: 'sayuran' },
-                { id: 'wortel', name: 'Wortel', unit: 'kg', price: 11000, icon: '🥕', category: 'sayuran' },
-                { id: 'kangkung', name: 'Kangkung', unit: 'ikat', price: 3500, icon: '🥬', category: 'sayuran' },
-                { id: 'bayam', name: 'Bayam', unit: 'ikat', price: 4000, icon: '🥬', category: 'sayuran' },
-                { id: 'pisang', name: 'Pisang', unit: 'sisir', price: 18000, icon: '🍌', category: 'buah' },
-                { id: 'jeruk', name: 'Jeruk', unit: 'kg', price: 22000, icon: '🍊', category: 'buah' },
-                { id: 'mangga', name: 'Mangga', unit: 'kg', price: 20000, icon: '🥭', category: 'buah' },
-                { id: 'kopi_arabika', name: 'Kopi Arabika', unit: 'kg', price: 85000, icon: '☕', category: 'perkebunan' },
-                { id: 'kopi_robusta', name: 'Kopi Robusta', unit: 'kg', price: 55000, icon: '☕', category: 'perkebunan' },
-                { id: 'kakao', name: 'Kakao', unit: 'kg', price: 35000, icon: '🍫', category: 'perkebunan' },
-                { id: 'gula_pasir', name: 'Gula Pasir', unit: 'kg', price: 16500, icon: '🍬', category: 'olahan' },
-                { id: 'minyak_goreng', name: 'Minyak Goreng', unit: 'liter', price: 18000, icon: '🛢️', category: 'olahan' }
-            ],
-            pupuk: [
-                { id: 'urea', name: 'Urea (46% N)', unit: 'kg', price: 2850, icon: '💧', type: 'anorganik' },
-                { id: 'za', name: 'ZA (21% N)', unit: 'kg', price: 2100, icon: '⚗️', type: 'anorganik' },
-                { id: 'tsp', name: 'TSP (46% P2O5)', unit: 'kg', price: 3200, icon: '🔬', type: 'anorganik' },
-                { id: 'kcl', name: 'KCl (60% K2O)', unit: 'kg', price: 7500, icon: '⚗️', type: 'anorganik' },
-                { id: 'npk_phonska', name: 'NPK Phonska', unit: 'kg', price: 2750, icon: '💎', type: 'majemuk' },
-                { id: 'npk_mutiara', name: 'NPK Mutiara 16-16-16', unit: 'kg', price: 7500, icon: '💎', type: 'majemuk' },
-                { id: 'kompos', name: 'Kompos', unit: 'kg', price: 1500, icon: '🌱', type: 'organik' },
-                { id: 'kandang_sapi', name: 'Pupuk Kandang Sapi', unit: 'kg', price: 800, icon: '🐄', type: 'organik' },
-                { id: 'kandang_ayam', name: 'Pupuk Kandang Ayam', unit: 'kg', price: 1200, icon: '🐔', type: 'organik' },
-                { id: 'gandasil_d', name: 'Gandasil D', unit: 'kg', price: 25000, icon: '🍃', type: 'daun' },
-                { id: 'mikoriza', name: 'Mikoriza', unit: 'kg', price: 45000, icon: '🍄', type: 'hayati' },
-                { id: 'em4', name: 'EM4 Pertanian', unit: 'liter', price: 25000, icon: '🦠', type: 'hayati' }
-            ],
-            hama: [
-                { id: 'imidacloprid', name: 'Imidacloprid', unit: 'liter', price: 95000, icon: '💊', target: 'wereng' },
-                { id: 'fipronil', name: 'Fipronil', unit: 'liter', price: 120000, icon: '💊', target: 'penggerek' },
-                { id: 'abamectin', name: 'Abamectin', unit: 'liter', price: 85000, icon: '💊', target: 'tungau' },
-                { id: 'spinosad', name: 'Spinosad', unit: 'liter', price: 145000, icon: '💊', target: 'ulat' },
-                { id: 'deltamethrin', name: 'Deltamethrin', unit: 'liter', price: 75000, icon: '💊', target: 'walang' },
-                { id: 'mankozeb', name: 'Mankozeb', unit: 'kg', price: 78000, icon: '🍄', target: 'jamur' },
-                { id: 'propineb', name: 'Propineb', unit: 'kg', price: 82000, icon: '🍄', target: 'jamur' },
-                { id: 'streptomisin', name: 'Streptomisin', unit: 'kg', price: 125000, icon: '🦠', target: 'bakteri' },
-                { id: 'rodentisida', name: 'Rodentisida', unit: 'kg', price: 45000, icon: '🐀', target: 'tikus' },
-                { id: 'herbisida_glifosat', name: 'Glifosat', unit: 'liter', price: 55000, icon: '🌿', target: 'gulma' }
-            ]
-        };
-
-        // ========== GENERATE 7-DAY HISTORY ==========
-        function generate7DayHistory(price) {
-            const history = [];
-            for (let i = 0; i < 7; i++) {
-                const variation = 1 + (Math.random() - 0.5) * 0.1;
-                history.push(Math.round(price * variation));
-            }
-            return history;
-        }
-
-        // ========== FORMAT PRICE ==========
-        function formatPrice(price) {
-            return 'Rp ' + price.toLocaleString('id-ID');
-        }
-
         // ========== LOAD DATA ==========
         async function loadData() {
             const progressEl = document.getElementById('loadingProgress');
 
-            // Simulate API fetching
-            progressEl.textContent = 'Mengambil data dari BPS API...';
-            await sleep(500);
-
-            progressEl.textContent = 'Mengambil data dari World Bank API...';
-            await sleep(400);
-
-            progressEl.textContent = 'Mengambil data dari Wikipedia...';
+            progressEl.textContent = 'Memuat metadata komoditas...';
             await sleep(300);
 
-            progressEl.textContent = 'Memproses data komoditas...';
-            await sleep(300);
-
-            // Process all data
+            // Process all data from CommodityData (which is now strictly metadata)
             allData = [];
 
             // Tanaman
-            commodityData.tanaman.forEach(item => {
-                const history = generate7DayHistory(item.price);
-                allData.push({
-                    ...item,
-                    type: 'tanaman',
-                    typeLabel: item.category,
-                    history: history,
-                    currentPrice: history[0],
-                    change: ((history[0] - history[6]) / history[6] * 100).toFixed(1)
+            if (CommodityData.commodities) {
+                CommodityData.commodities.forEach(item => {
+                    allData.push({
+                        ...item,
+                        type: 'tanaman',
+                        typeLabel: item.category || 'Tanaman',
+                    });
                 });
-            });
+            }
 
             // Pupuk
-            commodityData.pupuk.forEach(item => {
-                const history = generate7DayHistory(item.price);
-                allData.push({
-                    ...item,
-                    typeLabel: item.type,
-                    type: 'pupuk',
-                    history: history,
-                    currentPrice: history[0],
-                    change: ((history[0] - history[6]) / history[6] * 100).toFixed(1)
+            if (CommodityData.pupukDatabase) {
+                CommodityData.pupukDatabase.forEach(item => {
+                    allData.push({
+                        ...item,
+                        typeLabel: item.type || 'Pupuk',
+                        type: 'pupuk',
+                    });
                 });
-            });
+            }
 
             // Hama/Pestisida
-            commodityData.hama.forEach(item => {
-                const history = generate7DayHistory(item.price);
-                allData.push({
-                    ...item,
-                    typeLabel: item.target,
-                    type: 'hama',
-                    history: history,
-                    currentPrice: history[0],
-                    change: ((history[0] - history[6]) / history[6] * 100).toFixed(1)
+            if (CommodityData.hamaDatabase) {
+                CommodityData.hamaDatabase.forEach(item => {
+                    allData.push({
+                        ...item,
+                        typeLabel: item.type || 'Hama',
+                        type: 'hama',
+                    });
                 });
-            });
+            }
 
             progressEl.textContent = 'Data siap!';
             await sleep(300);
@@ -526,12 +431,7 @@
         // ========== UPDATE STATS ==========
         function updateStats() {
             const filteredData = getFilteredData();
-
             document.getElementById('totalItems').textContent = filteredData.length;
-
-            const avgPrice = filteredData.reduce((sum, item) => sum + item.currentPrice, 0) / filteredData.length;
-            document.getElementById('avgPrice').textContent = formatPrice(Math.round(avgPrice));
-
             const now = new Date();
             document.getElementById('lastUpdate').textContent =
                 now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
@@ -544,20 +444,11 @@
 
             tbody.innerHTML = data.map(item => `
                 <tr>
-                    <td class="icon">${item.icon}</td>
+                    <td class="icon">${item.icon || '📦'}</td>
                     <td><strong>${item.name}</strong></td>
                     <td>${item.typeLabel}</td>
-                    <td>${item.unit}</td>
-                    <td><strong>${formatPrice(item.history[0])}</strong></td>
-                    <td class="day-price">${formatPrice(item.history[1])}</td>
-                    <td class="day-price">${formatPrice(item.history[2])}</td>
-                    <td class="day-price">${formatPrice(item.history[3])}</td>
-                    <td class="day-price">${formatPrice(item.history[4])}</td>
-                    <td class="day-price">${formatPrice(item.history[5])}</td>
-                    <td class="day-price">${formatPrice(item.history[6])}</td>
-                    <td class="${item.change > 0 ? 'price-up' : item.change < 0 ? 'price-down' : 'price-stable'}">
-                        ${item.change > 0 ? '↑' : item.change < 0 ? '↓' : '−'} ${Math.abs(item.change)}%
-                    </td>
+                    <td>${item.unit || '-'}</td>
+                    <td>Cek API Resmi BPS</td>
                 </tr>
             `).join('');
         }
@@ -586,71 +477,14 @@
             let csv = '\uFEFF'; // UTF-8 BOM
 
             // Header
-            csv += 'Nama,Kategori,Unit,Harga Hari Ini,Hari -1,Hari -2,Hari -3,Hari -4,Hari -5,Hari -6,Perubahan %\n';
+            csv += 'Nama,Kategori,Unit,Sumber Data\n';
 
             // Data rows
             data.forEach(item => {
-                csv += `"${item.name}",${item.typeLabel},${item.unit},${item.history[0]},${item.history[1]},${item.history[2]},${item.history[3]},${item.history[4]},${item.history[5]},${item.history[6]},${item.change}\n`;
+                csv += `"${item.name}",${item.typeLabel},${item.unit || '-'},API BPS Indonesia\n`;
             });
 
-            downloadFile(csv, `taniku_data_${getTimestamp()}.csv`, 'text/csv');
-        }
-
-        // ========== DOWNLOAD JSON ==========
-        function downloadJSON() {
-            const data = getFilteredData();
-            const jsonData = {
-                exportDate: new Date().toISOString(),
-                source: 'Taniku Monitor',
-                totalItems: data.length,
-                items: data.map(item => ({
-                    id: item.id,
-                    name: item.name,
-                    category: item.typeLabel,
-                    type: item.type,
-                    unit: item.unit,
-                    currentPrice: item.currentPrice,
-                    priceHistory: item.history,
-                    changePercent: parseFloat(item.change)
-                }))
-            };
-
-            const json = JSON.stringify(jsonData, null, 2);
-            downloadFile(json, `taniku_data_${getTimestamp()}.json`, 'application/json');
-        }
-
-        // ========== DOWNLOAD DOCX (HTML format) ==========
-        function downloadDoc() {
-            const data = getFilteredData();
-            const now = new Date().toLocaleDateString('id-ID');
-
-            let html = `
-<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word'>
-<head><meta charset="utf-8"><title>Taniku Data Export</title></head>
-<body>
-<h1>📊 Laporan Data Komoditas</h1>
-<p><strong>Tanggal:</strong> ${now}</p>
-<p><strong>Total Item:</strong> ${data.length}</p>
-<p><strong>Sumber:</strong> BPS, World Bank, Wikipedia</p>
-<hr>
-<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse;">
-<tr style="background: #f0f0f0;">
-<th>Nama</th><th>Kategori</th><th>Unit</th><th>Harga</th><th>Perubahan</th>
-</tr>`;
-
-            data.forEach(item => {
-                html += `<tr>
-<td>${item.icon} ${item.name}</td>
-<td>${item.typeLabel}</td>
-<td>${item.unit}</td>
-<td>${formatPrice(item.currentPrice)}</td>
-<td>${item.change}%</td>
-</tr>`;
-            });
-
-            html += '</table></body></html>';
-
-            downloadFile(html, `taniku_data_${getTimestamp()}.doc`, 'application/msword');
+            downloadFile(csv, `taniku_metadata_${getTimestamp()}.csv`, 'text/csv');
         }
 
         // ========== DOWNLOAD HELPER ==========

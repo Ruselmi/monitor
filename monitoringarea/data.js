@@ -28,7 +28,10 @@ const CommodityData = {
             search_music: 'Cari musik...',
             no_music: 'Tidak ada musik',
             detecting_location: 'Mendeteksi lokasi...',
-            price_index: 'Indeks Harga'
+            price_index: 'Indeks Harga',
+            no_data: 'Data Tidak Tersedia',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         },
         jv: {
             commodities: 'Komoditas',
@@ -52,7 +55,10 @@ const CommodityData = {
             search_music: 'Goleki musik...',
             no_music: 'Ora ana musik',
             detecting_location: 'Nggoleki lokasi...',
-            price_index: 'Indeks Rego'
+            price_index: 'Indeks Rego',
+            no_data: 'Data Ora Ana',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         },
         en: {
             commodities: 'Commodities',
@@ -76,7 +82,10 @@ const CommodityData = {
             search_music: 'Search music...',
             no_music: 'No music playing',
             detecting_location: 'Detecting location...',
-            price_index: 'Price Index'
+            price_index: 'Price Index',
+            no_data: 'Data Not Available',
+            check_api: 'Check BPS Data',
+            source: 'Source'
         },
         lp: {
             commodities: 'Komoditas',
@@ -100,7 +109,10 @@ const CommodityData = {
             search_music: 'Cari musik...',
             no_music: 'Mak wat musik',
             detecting_location: 'Nyari lokasi...',
-            price_index: 'Indeks Rega'
+            price_index: 'Indeks Rega',
+            no_data: 'Data Mak Wat',
+            check_api: 'Cek Data BPS',
+            source: 'Sumber'
         }
     },
 
@@ -153,119 +165,119 @@ const CommodityData = {
         { id: 'tepung_beras', name: 'Tepung Beras', icon: '🍘', category: 'komoditas', subcategory: 'bahan_pokok', unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
 
         // === SAYURAN ===
-        { id: 'cabai_merah', name: 'Cabai Merah', icon: '🌶️', category: 'komoditas', subcategory: 'sayuran', price: 45000, unit: 'kg', harvestDays: 75, yieldPerHa: 12000 },
-        { id: 'cabai_rawit', name: 'Cabai Rawit', icon: '🌶️', category: 'komoditas', subcategory: 'sayuran', price: 55000, unit: 'kg', harvestDays: 70, yieldPerHa: 8000 },
-        { id: 'bawang_merah', name: 'Bawang Merah', icon: '🧅', category: 'komoditas', subcategory: 'sayuran', price: 35000, unit: 'kg', harvestDays: 65, yieldPerHa: 10000 },
-        { id: 'bawang_putih', name: 'Bawang Putih', icon: '🧄', category: 'komoditas', subcategory: 'sayuran', price: 40000, unit: 'kg', harvestDays: 120, yieldPerHa: 8000 },
-        { id: 'tomat', name: 'Tomat', icon: '🍅', category: 'komoditas', subcategory: 'sayuran', price: 15000, unit: 'kg', harvestDays: 70, yieldPerHa: 30000 },
-        { id: 'kentang', name: 'Kentang', icon: '🥔', category: 'komoditas', subcategory: 'sayuran', price: 18000, unit: 'kg', harvestDays: 100, yieldPerHa: 25000 },
-        { id: 'wortel', name: 'Wortel', icon: '🥕', category: 'komoditas', subcategory: 'sayuran', price: 16000, unit: 'kg', harvestDays: 90, yieldPerHa: 20000 },
-        { id: 'kubis', name: 'Kubis/Kol', icon: '🥬', category: 'komoditas', subcategory: 'sayuran', price: 8000, unit: 'kg', harvestDays: 80, yieldPerHa: 35000 },
-        { id: 'sawi', name: 'Sawi', icon: '🥬', category: 'komoditas', subcategory: 'sayuran', price: 10000, unit: 'kg', harvestDays: 40, yieldPerHa: 25000 },
-        { id: 'bayam', name: 'Bayam', icon: '🥬', category: 'komoditas', subcategory: 'sayuran', price: 12000, unit: 'kg', harvestDays: 25, yieldPerHa: 15000 },
-        { id: 'kangkung', name: 'Kangkung', icon: '🥬', category: 'komoditas', subcategory: 'sayuran', price: 8000, unit: 'kg', harvestDays: 30, yieldPerHa: 20000 },
-        { id: 'terong', name: 'Terong', icon: '🍆', category: 'komoditas', subcategory: 'sayuran', price: 12000, unit: 'kg', harvestDays: 55, yieldPerHa: 25000 },
-        { id: 'timun', name: 'Timun', icon: '🥒', category: 'komoditas', subcategory: 'sayuran', price: 8000, unit: 'kg', harvestDays: 45, yieldPerHa: 30000 },
-        { id: 'labu_siam', name: 'Labu Siam', icon: '🥒', category: 'komoditas', subcategory: 'sayuran', price: 7000, unit: 'kg', harvestDays: 60, yieldPerHa: 40000 },
-        { id: 'brokoli', name: 'Brokoli', icon: '🥦', category: 'komoditas', subcategory: 'sayuran', price: 25000, unit: 'kg', harvestDays: 80, yieldPerHa: 15000 },
-        { id: 'paprika', name: 'Paprika', icon: '🫑', category: 'komoditas', subcategory: 'sayuran', price: 45000, unit: 'kg', harvestDays: 75, yieldPerHa: 20000 },
-        { id: 'selada', name: 'Selada', icon: '🥗', category: 'komoditas', subcategory: 'sayuran', price: 15000, unit: 'kg', harvestDays: 45, yieldPerHa: 18000 },
+        { id: 'cabai_merah', name: 'Cabai Merah', icon: '🌶️', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 75, yieldPerHa: 12000 },
+        { id: 'cabai_rawit', name: 'Cabai Rawit', icon: '🌶️', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 70, yieldPerHa: 8000 },
+        { id: 'bawang_merah', name: 'Bawang Merah', icon: '🧅', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 65, yieldPerHa: 10000 },
+        { id: 'bawang_putih', name: 'Bawang Putih', icon: '🧄', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 120, yieldPerHa: 8000 },
+        { id: 'tomat', name: 'Tomat', icon: '🍅', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 70, yieldPerHa: 30000 },
+        { id: 'kentang', name: 'Kentang', icon: '🥔', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 100, yieldPerHa: 25000 },
+        { id: 'wortel', name: 'Wortel', icon: '🥕', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 90, yieldPerHa: 20000 },
+        { id: 'kubis', name: 'Kubis/Kol', icon: '🥬', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 80, yieldPerHa: 35000 },
+        { id: 'sawi', name: 'Sawi', icon: '🥬', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 40, yieldPerHa: 25000 },
+        { id: 'bayam', name: 'Bayam', icon: '🥬', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 25, yieldPerHa: 15000 },
+        { id: 'kangkung', name: 'Kangkung', icon: '🥬', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 30, yieldPerHa: 20000 },
+        { id: 'terong', name: 'Terong', icon: '🍆', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 55, yieldPerHa: 25000 },
+        { id: 'timun', name: 'Timun', icon: '🥒', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 45, yieldPerHa: 30000 },
+        { id: 'labu_siam', name: 'Labu Siam', icon: '🥒', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 60, yieldPerHa: 40000 },
+        { id: 'brokoli', name: 'Brokoli', icon: '🥦', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 80, yieldPerHa: 15000 },
+        { id: 'paprika', name: 'Paprika', icon: '🫑', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 75, yieldPerHa: 20000 },
+        { id: 'selada', name: 'Selada', icon: '🥗', category: 'komoditas', subcategory: 'sayuran',  unit: 'kg', harvestDays: 45, yieldPerHa: 18000 },
 
         // === BUAH ===
-        { id: 'pisang', name: 'Pisang', icon: '🍌', category: 'komoditas', subcategory: 'buah', price: 12000, unit: 'kg', harvestDays: 365, yieldPerHa: 30000 },
-        { id: 'jeruk', name: 'Jeruk', icon: '🍊', category: 'komoditas', subcategory: 'buah', price: 20000, unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
-        { id: 'apel', name: 'Apel', icon: '🍎', category: 'komoditas', subcategory: 'buah', price: 35000, unit: 'kg', harvestDays: 180, yieldPerHa: 20000 },
-        { id: 'mangga', name: 'Mangga', icon: '🥭', category: 'komoditas', subcategory: 'buah', price: 25000, unit: 'kg', harvestDays: 120, yieldPerHa: 15000 },
-        { id: 'semangka', name: 'Semangka', icon: '🍉', category: 'komoditas', subcategory: 'buah', price: 8000, unit: 'kg', harvestDays: 75, yieldPerHa: 35000 },
-        { id: 'melon', name: 'Melon', icon: '🍈', category: 'komoditas', subcategory: 'buah', price: 18000, unit: 'kg', harvestDays: 65, yieldPerHa: 25000 },
-        { id: 'pepaya', name: 'Pepaya', icon: '🍈', category: 'komoditas', subcategory: 'buah', price: 10000, unit: 'kg', harvestDays: 270, yieldPerHa: 60000 },
-        { id: 'nanas', name: 'Nanas', icon: '🍍', category: 'komoditas', subcategory: 'buah', price: 12000, unit: 'kg', harvestDays: 540, yieldPerHa: 40000 },
-        { id: 'anggur', name: 'Anggur', icon: '🍇', category: 'komoditas', subcategory: 'buah', price: 65000, unit: 'kg', harvestDays: 150, yieldPerHa: 15000 },
-        { id: 'strawberry', name: 'Strawberry', icon: '🍓', category: 'komoditas', subcategory: 'buah', price: 75000, unit: 'kg', harvestDays: 90, yieldPerHa: 12000 },
-        { id: 'durian', name: 'Durian', icon: '🍈', category: 'komoditas', subcategory: 'buah', price: 55000, unit: 'kg', harvestDays: 1825, yieldPerHa: 8000 },
-        { id: 'rambutan', name: 'Rambutan', icon: '🍒', category: 'komoditas', subcategory: 'buah', price: 20000, unit: 'kg', harvestDays: 1460, yieldPerHa: 12000 },
-        { id: 'kelapa', name: 'Kelapa', icon: '🥥', category: 'komoditas', subcategory: 'buah', price: 8000, unit: 'buah', harvestDays: 1095, yieldPerHa: 5000 },
-        { id: 'alpukat', name: 'Alpukat', icon: '🥑', category: 'komoditas', subcategory: 'buah', price: 25000, unit: 'kg', harvestDays: 1095, yieldPerHa: 10000 },
+        { id: 'pisang', name: 'Pisang', icon: '🍌', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 365, yieldPerHa: 30000 },
+        { id: 'jeruk', name: 'Jeruk', icon: '🍊', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
+        { id: 'apel', name: 'Apel', icon: '🍎', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 180, yieldPerHa: 20000 },
+        { id: 'mangga', name: 'Mangga', icon: '🥭', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 120, yieldPerHa: 15000 },
+        { id: 'semangka', name: 'Semangka', icon: '🍉', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 75, yieldPerHa: 35000 },
+        { id: 'melon', name: 'Melon', icon: '🍈', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 65, yieldPerHa: 25000 },
+        { id: 'pepaya', name: 'Pepaya', icon: '🍈', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 270, yieldPerHa: 60000 },
+        { id: 'nanas', name: 'Nanas', icon: '🍍', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 540, yieldPerHa: 40000 },
+        { id: 'anggur', name: 'Anggur', icon: '🍇', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 150, yieldPerHa: 15000 },
+        { id: 'strawberry', name: 'Strawberry', icon: '🍓', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 90, yieldPerHa: 12000 },
+        { id: 'durian', name: 'Durian', icon: '🍈', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 1825, yieldPerHa: 8000 },
+        { id: 'rambutan', name: 'Rambutan', icon: '🍒', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 1460, yieldPerHa: 12000 },
+        { id: 'kelapa', name: 'Kelapa', icon: '🥥', category: 'komoditas', subcategory: 'buah',  unit: 'buah', harvestDays: 1095, yieldPerHa: 5000 },
+        { id: 'alpukat', name: 'Alpukat', icon: '🥑', category: 'komoditas', subcategory: 'buah',  unit: 'kg', harvestDays: 1095, yieldPerHa: 10000 },
 
         // === PROTEIN ===
-        { id: 'daging_sapi', name: 'Daging Sapi', icon: '🥩', category: 'komoditas', subcategory: 'protein', price: 135000, unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
-        { id: 'daging_ayam', name: 'Daging Ayam', icon: '🍗', category: 'komoditas', subcategory: 'protein', price: 35000, unit: 'kg', harvestDays: 35, yieldPerHa: 0 },
-        { id: 'daging_kambing', name: 'Daging Kambing', icon: '🥩', category: 'komoditas', subcategory: 'protein', price: 120000, unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
-        { id: 'telur_ayam', name: 'Telur Ayam', icon: '🥚', category: 'komoditas', subcategory: 'protein', price: 28000, unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
-        { id: 'telur_bebek', name: 'Telur Bebek', icon: '🥚', category: 'komoditas', subcategory: 'protein', price: 32000, unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
-        { id: 'ikan_lele', name: 'Ikan Lele', icon: '🐟', category: 'komoditas', subcategory: 'protein', price: 28000, unit: 'kg', harvestDays: 90, yieldPerHa: 0 },
-        { id: 'ikan_nila', name: 'Ikan Nila', icon: '🐟', category: 'komoditas', subcategory: 'protein', price: 35000, unit: 'kg', harvestDays: 120, yieldPerHa: 0 },
-        { id: 'udang', name: 'Udang', icon: '🦐', category: 'komoditas', subcategory: 'protein', price: 85000, unit: 'kg', harvestDays: 100, yieldPerHa: 0 },
-        { id: 'ikan_mas', name: 'Ikan Mas', icon: '🐟', category: 'komoditas', subcategory: 'protein', price: 40000, unit: 'kg', harvestDays: 150, yieldPerHa: 0 },
-        { id: 'ikan_gurame', name: 'Ikan Gurame', icon: '🐟', category: 'komoditas', subcategory: 'protein', price: 55000, unit: 'kg', harvestDays: 180, yieldPerHa: 0 },
+        { id: 'daging_sapi', name: 'Daging Sapi', icon: '🥩', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
+        { id: 'daging_ayam', name: 'Daging Ayam', icon: '🍗', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 35, yieldPerHa: 0 },
+        { id: 'daging_kambing', name: 'Daging Kambing', icon: '🥩', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
+        { id: 'telur_ayam', name: 'Telur Ayam', icon: '🥚', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
+        { id: 'telur_bebek', name: 'Telur Bebek', icon: '🥚', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 0, yieldPerHa: 0 },
+        { id: 'ikan_lele', name: 'Ikan Lele', icon: '🐟', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 90, yieldPerHa: 0 },
+        { id: 'ikan_nila', name: 'Ikan Nila', icon: '🐟', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 120, yieldPerHa: 0 },
+        { id: 'udang', name: 'Udang', icon: '🦐', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 100, yieldPerHa: 0 },
+        { id: 'ikan_mas', name: 'Ikan Mas', icon: '🐟', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 150, yieldPerHa: 0 },
+        { id: 'ikan_gurame', name: 'Ikan Gurame', icon: '🐟', category: 'komoditas', subcategory: 'protein',  unit: 'kg', harvestDays: 180, yieldPerHa: 0 },
 
         // === MINUMAN ===
-        { id: 'kopi_arabika', name: 'Kopi Arabika', icon: '☕', category: 'komoditas', subcategory: 'minuman', price: 85000, unit: 'kg', harvestDays: 1095, yieldPerHa: 1500 },
-        { id: 'kopi_robusta', name: 'Kopi Robusta', icon: '☕', category: 'komoditas', subcategory: 'minuman', price: 55000, unit: 'kg', harvestDays: 1095, yieldPerHa: 2000 },
-        { id: 'kopi_liberika', name: 'Kopi Liberika', icon: '☕', category: 'komoditas', subcategory: 'minuman', price: 70000, unit: 'kg', harvestDays: 1095, yieldPerHa: 1800 },
-        { id: 'kakao', name: 'Kakao', icon: '🍫', category: 'komoditas', subcategory: 'minuman', price: 45000, unit: 'kg', harvestDays: 730, yieldPerHa: 1000 },
-        { id: 'susu_segar', name: 'Susu Segar', icon: '🥛', category: 'komoditas', subcategory: 'minuman', price: 12000, unit: 'liter', harvestDays: 0, yieldPerHa: 0 },
-        { id: 'teh', name: 'Teh', icon: '🍵', category: 'komoditas', subcategory: 'minuman', price: 25000, unit: 'kg', harvestDays: 1095, yieldPerHa: 5000 },
+        { id: 'kopi_arabika', name: 'Kopi Arabika', icon: '☕', category: 'komoditas', subcategory: 'minuman',  unit: 'kg', harvestDays: 1095, yieldPerHa: 1500 },
+        { id: 'kopi_robusta', name: 'Kopi Robusta', icon: '☕', category: 'komoditas', subcategory: 'minuman',  unit: 'kg', harvestDays: 1095, yieldPerHa: 2000 },
+        { id: 'kopi_liberika', name: 'Kopi Liberika', icon: '☕', category: 'komoditas', subcategory: 'minuman',  unit: 'kg', harvestDays: 1095, yieldPerHa: 1800 },
+        { id: 'kakao', name: 'Kakao', icon: '🍫', category: 'komoditas', subcategory: 'minuman',  unit: 'kg', harvestDays: 730, yieldPerHa: 1000 },
+        { id: 'susu_segar', name: 'Susu Segar', icon: '🥛', category: 'komoditas', subcategory: 'minuman',  unit: 'liter', harvestDays: 0, yieldPerHa: 0 },
+        { id: 'teh', name: 'Teh', icon: '🍵', category: 'komoditas', subcategory: 'minuman',  unit: 'kg', harvestDays: 1095, yieldPerHa: 5000 },
 
         // === BUMBU ===
-        { id: 'jahe', name: 'Jahe', icon: '🧅', category: 'komoditas', subcategory: 'bumbu', price: 35000, unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
-        { id: 'kunyit', name: 'Kunyit', icon: '🧅', category: 'komoditas', subcategory: 'bumbu', price: 25000, unit: 'kg', harvestDays: 270, yieldPerHa: 20000 },
-        { id: 'lengkuas', name: 'Lengkuas', icon: '🧅', category: 'komoditas', subcategory: 'bumbu', price: 18000, unit: 'kg', harvestDays: 300, yieldPerHa: 30000 },
-        { id: 'lada', name: 'Lada', icon: '🫛', category: 'komoditas', subcategory: 'bumbu', price: 120000, unit: 'kg', harvestDays: 1095, yieldPerHa: 2000 },
-        { id: 'pala', name: 'Pala', icon: '🫛', category: 'komoditas', subcategory: 'bumbu', price: 150000, unit: 'kg', harvestDays: 2555, yieldPerHa: 1500 },
-        { id: 'cengkeh', name: 'Cengkeh', icon: '🫛', category: 'komoditas', subcategory: 'bumbu', price: 95000, unit: 'kg', harvestDays: 1825, yieldPerHa: 500 },
-        { id: 'kayu_manis', name: 'Kayu Manis', icon: '🫛', category: 'komoditas', subcategory: 'bumbu', price: 85000, unit: 'kg', harvestDays: 2190, yieldPerHa: 800 },
-        { id: 'kemiri', name: 'Kemiri', icon: '🥜', category: 'komoditas', subcategory: 'bumbu', price: 35000, unit: 'kg', harvestDays: 1825, yieldPerHa: 3000 },
-        { id: 'serai', name: 'Serai', icon: '🌿', category: 'komoditas', subcategory: 'bumbu', price: 15000, unit: 'kg', harvestDays: 120, yieldPerHa: 15000 },
-        { id: 'daun_salam', name: 'Daun Salam', icon: '🌿', category: 'komoditas', subcategory: 'bumbu', price: 20000, unit: 'kg', harvestDays: 365, yieldPerHa: 5000 },
+        { id: 'jahe', name: 'Jahe', icon: '🧅', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
+        { id: 'kunyit', name: 'Kunyit', icon: '🧅', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 270, yieldPerHa: 20000 },
+        { id: 'lengkuas', name: 'Lengkuas', icon: '🧅', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 300, yieldPerHa: 30000 },
+        { id: 'lada', name: 'Lada', icon: '🫛', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 1095, yieldPerHa: 2000 },
+        { id: 'pala', name: 'Pala', icon: '🫛', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 2555, yieldPerHa: 1500 },
+        { id: 'cengkeh', name: 'Cengkeh', icon: '🫛', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 1825, yieldPerHa: 500 },
+        { id: 'kayu_manis', name: 'Kayu Manis', icon: '🫛', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 2190, yieldPerHa: 800 },
+        { id: 'kemiri', name: 'Kemiri', icon: '🥜', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 1825, yieldPerHa: 3000 },
+        { id: 'serai', name: 'Serai', icon: '🌿', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 120, yieldPerHa: 15000 },
+        { id: 'daun_salam', name: 'Daun Salam', icon: '🌿', category: 'komoditas', subcategory: 'bumbu',  unit: 'kg', harvestDays: 365, yieldPerHa: 5000 },
 
         // === KACANG ===
-        { id: 'kacang_tanah', name: 'Kacang Tanah', icon: '🥜', category: 'komoditas', subcategory: 'kacang', price: 28000, unit: 'kg', harvestDays: 100, yieldPerHa: 3000 },
-        { id: 'kacang_hijau', name: 'Kacang Hijau', icon: '🫛', category: 'komoditas', subcategory: 'kacang', price: 25000, unit: 'kg', harvestDays: 65, yieldPerHa: 1500 },
-        { id: 'kacang_merah', name: 'Kacang Merah', icon: '🫘', category: 'komoditas', subcategory: 'kacang', price: 30000, unit: 'kg', harvestDays: 80, yieldPerHa: 2000 },
-        { id: 'kacang_kedelai', name: 'Kacang Kedelai', icon: '🫘', category: 'komoditas', subcategory: 'kacang', price: 15000, unit: 'kg', harvestDays: 85, yieldPerHa: 2000 },
-        { id: 'kacang_panjang', name: 'Kacang Panjang', icon: '🫛', category: 'komoditas', subcategory: 'kacang', price: 12000, unit: 'kg', harvestDays: 50, yieldPerHa: 15000 },
+        { id: 'kacang_tanah', name: 'Kacang Tanah', icon: '🥜', category: 'komoditas', subcategory: 'kacang',  unit: 'kg', harvestDays: 100, yieldPerHa: 3000 },
+        { id: 'kacang_hijau', name: 'Kacang Hijau', icon: '🫛', category: 'komoditas', subcategory: 'kacang',  unit: 'kg', harvestDays: 65, yieldPerHa: 1500 },
+        { id: 'kacang_merah', name: 'Kacang Merah', icon: '🫘', category: 'komoditas', subcategory: 'kacang',  unit: 'kg', harvestDays: 80, yieldPerHa: 2000 },
+        { id: 'kacang_kedelai', name: 'Kacang Kedelai', icon: '🫘', category: 'komoditas', subcategory: 'kacang',  unit: 'kg', harvestDays: 85, yieldPerHa: 2000 },
+        { id: 'kacang_panjang', name: 'Kacang Panjang', icon: '🫛', category: 'komoditas', subcategory: 'kacang',  unit: 'kg', harvestDays: 50, yieldPerHa: 15000 },
 
         // === UMBI ===
-        { id: 'singkong', name: 'Singkong', icon: '🥔', category: 'komoditas', subcategory: 'umbi', price: 4000, unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
-        { id: 'ubi_jalar', name: 'Ubi Jalar', icon: '🍠', category: 'komoditas', subcategory: 'umbi', price: 8000, unit: 'kg', harvestDays: 120, yieldPerHa: 20000 },
-        { id: 'talas', name: 'Talas', icon: '🥔', category: 'komoditas', subcategory: 'umbi', price: 15000, unit: 'kg', harvestDays: 240, yieldPerHa: 15000 },
-        { id: 'uwi', name: 'Uwi', icon: '🥔', category: 'komoditas', subcategory: 'umbi', price: 12000, unit: 'kg', harvestDays: 300, yieldPerHa: 18000 },
-        { id: 'ganyong', name: 'Ganyong', icon: '🥔', category: 'komoditas', subcategory: 'umbi', price: 10000, unit: 'kg', harvestDays: 270, yieldPerHa: 20000 },
+        { id: 'singkong', name: 'Singkong', icon: '🥔', category: 'komoditas', subcategory: 'umbi',  unit: 'kg', harvestDays: 270, yieldPerHa: 25000 },
+        { id: 'ubi_jalar', name: 'Ubi Jalar', icon: '🍠', category: 'komoditas', subcategory: 'umbi',  unit: 'kg', harvestDays: 120, yieldPerHa: 20000 },
+        { id: 'talas', name: 'Talas', icon: '🥔', category: 'komoditas', subcategory: 'umbi',  unit: 'kg', harvestDays: 240, yieldPerHa: 15000 },
+        { id: 'uwi', name: 'Uwi', icon: '🥔', category: 'komoditas', subcategory: 'umbi',  unit: 'kg', harvestDays: 300, yieldPerHa: 18000 },
+        { id: 'ganyong', name: 'Ganyong', icon: '🥔', category: 'komoditas', subcategory: 'umbi',  unit: 'kg', harvestDays: 270, yieldPerHa: 20000 },
 
         // === PUPUK ORGANIK ===
-        { id: 'kompos', name: 'Kompos', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik', price: 1500, unit: 'kg' },
-        { id: 'pupuk_kandang', name: 'Pupuk Kandang', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik', price: 1000, unit: 'kg' },
-        { id: 'petroganik', name: 'Petroganik', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik', price: 2500, unit: 'kg' },
-        { id: 'bokashi', name: 'Bokashi', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik', price: 3000, unit: 'kg' },
-        { id: 'guano', name: 'Guano', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik', price: 5000, unit: 'kg' },
+        { id: 'kompos', name: 'Kompos', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik',  unit: 'kg' },
+        { id: 'pupuk_kandang', name: 'Pupuk Kandang', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik',  unit: 'kg' },
+        { id: 'petroganik', name: 'Petroganik', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik',  unit: 'kg' },
+        { id: 'bokashi', name: 'Bokashi', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik',  unit: 'kg' },
+        { id: 'guano', name: 'Guano', icon: '🌱', category: 'pupuk', subcategory: 'pupuk_organik',  unit: 'kg' },
 
         // === PUPUK ANORGANIK ===
-        { id: 'urea', name: 'Urea', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 2850, unit: 'kg' },
-        { id: 'npk', name: 'NPK Phonska', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 2750, unit: 'kg' },
-        { id: 'tsp', name: 'TSP', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 3200, unit: 'kg' },
-        { id: 'kcl', name: 'KCl', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 7500, unit: 'kg' },
-        { id: 'za', name: 'ZA', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 2100, unit: 'kg' },
-        { id: 'sp36', name: 'SP-36', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik', price: 2800, unit: 'kg' },
+        { id: 'urea', name: 'Urea', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
+        { id: 'npk', name: 'NPK Phonska', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
+        { id: 'tsp', name: 'TSP', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
+        { id: 'kcl', name: 'KCl', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
+        { id: 'za', name: 'ZA', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
+        { id: 'sp36', name: 'SP-36', icon: '⚗️', category: 'pupuk', subcategory: 'pupuk_anorganik',  unit: 'kg' },
 
         // === PESTISIDA ===
-        { id: 'decis', name: 'Decis', icon: '🐛', category: 'pupuk', subcategory: 'pestisida', price: 85000, unit: 'liter' },
-        { id: 'regent', name: 'Regent', icon: '🐛', category: 'pupuk', subcategory: 'pestisida', price: 95000, unit: 'liter' },
-        { id: 'prevathon', name: 'Prevathon', icon: '🐛', category: 'pupuk', subcategory: 'pestisida', price: 450000, unit: 'liter' },
-        { id: 'marshal', name: 'Marshal', icon: '🐛', category: 'pupuk', subcategory: 'pestisida', price: 75000, unit: 'kg' },
-        { id: 'furadan', name: 'Furadan', icon: '🐛', category: 'pupuk', subcategory: 'pestisida', price: 55000, unit: 'kg' },
+        { id: 'decis', name: 'Decis', icon: '🐛', category: 'pupuk', subcategory: 'pestisida',  unit: 'liter' },
+        { id: 'regent', name: 'Regent', icon: '🐛', category: 'pupuk', subcategory: 'pestisida',  unit: 'liter' },
+        { id: 'prevathon', name: 'Prevathon', icon: '🐛', category: 'pupuk', subcategory: 'pestisida',  unit: 'liter' },
+        { id: 'marshal', name: 'Marshal', icon: '🐛', category: 'pupuk', subcategory: 'pestisida',  unit: 'kg' },
+        { id: 'furadan', name: 'Furadan', icon: '🐛', category: 'pupuk', subcategory: 'pestisida',  unit: 'kg' },
 
         // === HERBISIDA ===
-        { id: 'roundup', name: 'Roundup', icon: '🌿', category: 'pupuk', subcategory: 'herbisida', price: 75000, unit: 'liter' },
-        { id: 'gramaxone', name: 'Gramaxone', icon: '🌿', category: 'pupuk', subcategory: 'herbisida', price: 85000, unit: 'liter' },
-        { id: 'ally', name: 'Ally', icon: '🌿', category: 'pupuk', subcategory: 'herbisida', price: 120000, unit: 'kg' },
-        { id: 'clincher', name: 'Clincher', icon: '🌿', category: 'pupuk', subcategory: 'herbisida', price: 180000, unit: 'liter' },
+        { id: 'roundup', name: 'Roundup', icon: '🌿', category: 'pupuk', subcategory: 'herbisida',  unit: 'liter' },
+        { id: 'gramaxone', name: 'Gramaxone', icon: '🌿', category: 'pupuk', subcategory: 'herbisida',  unit: 'liter' },
+        { id: 'ally', name: 'Ally', icon: '🌿', category: 'pupuk', subcategory: 'herbisida',  unit: 'kg' },
+        { id: 'clincher', name: 'Clincher', icon: '🌿', category: 'pupuk', subcategory: 'herbisida',  unit: 'liter' },
 
         // === FUNGISIDA ===
-        { id: 'dithane', name: 'Dithane', icon: '🍄', category: 'pupuk', subcategory: 'fungisida', price: 65000, unit: 'kg' },
-        { id: 'antracol', name: 'Antracol', icon: '🍄', category: 'pupuk', subcategory: 'fungisida', price: 75000, unit: 'kg' },
-        { id: 'score', name: 'Score', icon: '🍄', category: 'pupuk', subcategory: 'fungisida', price: 250000, unit: 'liter' },
-        { id: 'amistartop', name: 'Amistar Top', icon: '🍄', category: 'pupuk', subcategory: 'fungisida', price: 320000, unit: 'liter' }
+        { id: 'dithane', name: 'Dithane', icon: '🍄', category: 'pupuk', subcategory: 'fungisida',  unit: 'kg' },
+        { id: 'antracol', name: 'Antracol', icon: '🍄', category: 'pupuk', subcategory: 'fungisida',  unit: 'kg' },
+        { id: 'score', name: 'Score', icon: '🍄', category: 'pupuk', subcategory: 'fungisida',  unit: 'liter' },
+        { id: 'amistartop', name: 'Amistar Top', icon: '🍄', category: 'pupuk', subcategory: 'fungisida',  unit: 'liter' }
     ],
 
     // ========== VARIETIES/SUB-COMMODITIES ==========
@@ -276,65 +288,65 @@ const CommodityData = {
             { id: 'rojolele', name: 'Rojolele' },
             { id: 'pandan_wangi', name: 'Pandan Wangi' },
             { id: 'mentik_wangi', name: 'Mentik Wangi' },
-            { id: 'inpari', name: 'Inpari 32', price: 14500 },
-            { id: 'beras_merah', name: 'Beras Merah', price: 25000 },
-            { id: 'beras_hitam', name: 'Beras Hitam', price: 35000 },
-            { id: 'beras_ketan', name: 'Beras Ketan', price: 20000 },
-            { id: 'siam', name: 'Siam Unus', price: 13000 },
-            { id: 'sembada', name: 'Sembada', price: 15000 },
-            { id: 'sintanur', name: 'Sintanur', price: 14200 },
-            { id: 'situbagendit', name: 'Situbagendit', price: 13800 },
-            { id: 'mekongga', name: 'Mekongga', price: 14100 },
-            { id: 'jembar', name: 'Jembar', price: 13600 },
-            { id: 'cibogo', name: 'Cibogo', price: 13400 },
-            { id: 'fatmawati', name: 'Fatmawati', price: 14800 },
-            { id: 'rajalele', name: 'Rajalele', price: 16500 },
-            { id: 'memberamo', name: 'Memberamo', price: 13900 },
-            { id: 'cigeulis', name: 'Cigeulis', price: 14300 }
+            { id: 'inpari', name: 'Inpari 32',  },
+            { id: 'beras_merah', name: 'Beras Merah',  },
+            { id: 'beras_hitam', name: 'Beras Hitam',  },
+            { id: 'beras_ketan', name: 'Beras Ketan',  },
+            { id: 'siam', name: 'Siam Unus',  },
+            { id: 'sembada', name: 'Sembada',  },
+            { id: 'sintanur', name: 'Sintanur',  },
+            { id: 'situbagendit', name: 'Situbagendit',  },
+            { id: 'mekongga', name: 'Mekongga',  },
+            { id: 'jembar', name: 'Jembar',  },
+            { id: 'cibogo', name: 'Cibogo',  },
+            { id: 'fatmawati', name: 'Fatmawati',  },
+            { id: 'rajalele', name: 'Rajalele',  },
+            { id: 'memberamo', name: 'Memberamo',  },
+            { id: 'cigeulis', name: 'Cigeulis',  }
         ],
         'kopi_arabika': [
-            { id: 'gayo', name: 'Gayo', price: 95000 },
-            { id: 'toraja', name: 'Toraja', price: 90000 },
-            { id: 'java', name: 'Java Preanger', price: 88000 },
-            { id: 'flores', name: 'Flores Bajawa', price: 92000 },
-            { id: 'bali_kintamani', name: 'Bali Kintamani', price: 85000 },
-            { id: 'mandailing', name: 'Mandailing', price: 98000 },
-            { id: 'wamena', name: 'Wamena', price: 105000 },
-            { id: 'luwak', name: 'Kopi Luwak', price: 850000 },
-            { id: 'temanggung', name: 'Temanggung', price: 82000 },
-            { id: 'bondowoso', name: 'Bondowoso', price: 80000 },
-            { id: 'semeru', name: 'Semeru', price: 87000 },
-            { id: 'malabar', name: 'Malabar', price: 83000 },
-            { id: 'kerinci', name: 'Kerinci', price: 89000 },
-            { id: 'enrekang', name: 'Enrekang', price: 84000 },
-            { id: 'mamasa', name: 'Mamasa', price: 86000 },
-            { id: 'lintong', name: 'Lintong', price: 91000 },
-            { id: 'sidikalang', name: 'Sidikalang', price: 88000 },
-            { id: 'dairi', name: 'Dairi', price: 85000 },
-            { id: 'takengon', name: 'Takengon', price: 94000 },
-            { id: 'lampung', name: 'Lampung Highland', price: 78000 }
+            { id: 'gayo', name: 'Gayo',  },
+            { id: 'toraja', name: 'Toraja',  },
+            { id: 'java', name: 'Java Preanger',  },
+            { id: 'flores', name: 'Flores Bajawa',  },
+            { id: 'bali_kintamani', name: 'Bali Kintamani',  },
+            { id: 'mandailing', name: 'Mandailing',  },
+            { id: 'wamena', name: 'Wamena',  },
+            { id: 'luwak', name: 'Kopi Luwak',  },
+            { id: 'temanggung', name: 'Temanggung',  },
+            { id: 'bondowoso', name: 'Bondowoso',  },
+            { id: 'semeru', name: 'Semeru',  },
+            { id: 'malabar', name: 'Malabar',  },
+            { id: 'kerinci', name: 'Kerinci',  },
+            { id: 'enrekang', name: 'Enrekang',  },
+            { id: 'mamasa', name: 'Mamasa',  },
+            { id: 'lintong', name: 'Lintong',  },
+            { id: 'sidikalang', name: 'Sidikalang',  },
+            { id: 'dairi', name: 'Dairi',  },
+            { id: 'takengon', name: 'Takengon',  },
+            { id: 'lampung', name: 'Lampung Highland',  }
         ],
         'cabai_merah': [
-            { id: 'keriting', name: 'Cabai Keriting', price: 48000 },
-            { id: 'merah_besar', name: 'Cabai Merah Besar', price: 42000 },
-            { id: 'tit_super', name: 'TIT Super', price: 50000 },
-            { id: 'lado', name: 'Lado F1', price: 52000 },
-            { id: 'hot_beauty', name: 'Hot Beauty', price: 47000 },
-            { id: 'panex', name: 'Panex-100', price: 49000 },
-            { id: 'laba', name: 'Laba F1', price: 46000 },
-            { id: 'cakra', name: 'Cakra Hijau', price: 44000 },
-            { id: 'kirana', name: 'Kirana', price: 45000 },
-            { id: 'genie', name: 'Genie', price: 51000 },
-            { id: 'twist', name: 'Twist', price: 43000 },
-            { id: 'horison', name: 'Horison', price: 48000 },
-            { id: 'tanamo', name: 'Tanamo', price: 47000 },
-            { id: 'elegance', name: 'Elegance', price: 53000 },
-            { id: 'arimbi', name: 'Arimbi', price: 46000 },
-            { id: 'landung', name: 'Landung', price: 44000 },
-            { id: 'biola', name: 'Biola F1', price: 50000 },
-            { id: 'imola', name: 'Imola', price: 49000 },
-            { id: 'bemora', name: 'Bemora', price: 47000 },
-            { id: 'bhaskara', name: 'Bhaskara', price: 48000 }
+            { id: 'keriting', name: 'Cabai Keriting',  },
+            { id: 'merah_besar', name: 'Cabai Merah Besar',  },
+            { id: 'tit_super', name: 'TIT Super',  },
+            { id: 'lado', name: 'Lado F1',  },
+            { id: 'hot_beauty', name: 'Hot Beauty',  },
+            { id: 'panex', name: 'Panex-100',  },
+            { id: 'laba', name: 'Laba F1',  },
+            { id: 'cakra', name: 'Cakra Hijau',  },
+            { id: 'kirana', name: 'Kirana',  },
+            { id: 'genie', name: 'Genie',  },
+            { id: 'twist', name: 'Twist',  },
+            { id: 'horison', name: 'Horison',  },
+            { id: 'tanamo', name: 'Tanamo',  },
+            { id: 'elegance', name: 'Elegance',  },
+            { id: 'arimbi', name: 'Arimbi',  },
+            { id: 'landung', name: 'Landung',  },
+            { id: 'biola', name: 'Biola F1',  },
+            { id: 'imola', name: 'Imola',  },
+            { id: 'bemora', name: 'Bemora',  },
+            { id: 'bhaskara', name: 'Bhaskara',  }
         ]
     },
 
@@ -405,13 +417,12 @@ const CommodityData = {
         return types.slice(0, 20).map((type, i) => ({
             id: `${commodityId}_${i}`,
             name: `${commodity.name} ${type}`,
-            price: Math.round(commodity.price * (0.8 + Math.random() * 0.4))
+
         }));
     },
 
     getBasePrice(commodityId) {
-        const commodity = this.getCommodityById(commodityId);
-        return commodity ? commodity.price : 10000;
+        return null;
     },
 
     getTranslation(key, lang = 'id') {
@@ -428,14 +439,9 @@ const CommodityData = {
 
         const areaHa = areaM2 / 10000;
         const yieldKg = Math.round(commodity.yieldPerHa * areaHa);
-        const revenue = yieldKg * commodity.price;
-        const fertilizerCost = Math.round(areaHa * 2500000); // Approx 2.5M per Ha
-
+        // Revenue is calculated in script.js with user input
         return {
             yield: yieldKg,
-            revenue: revenue,
-            fertilizerCost: fertilizerCost,
-            netProfit: revenue - fertilizerCost,
             harvestDays: commodity.harvestDays
         };
     },
@@ -452,50 +458,50 @@ const CommodityData = {
         { id: 'burung_pipit', name: 'Burung Pipit', type: 'vertebrata', target: ['padi'], severity: 'sedang', icon: '🐦', symptoms: 'Gabah dimakan', solution: 'Jaring, orang-orangan' },
 
         // HAMA CABAI
-        { id: 'thrips', name: 'Thrips', type: 'serangga', target: ['cabai', 'bawang'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun keriting', solution: 'Abamectin, mulsa', price: 85000 },
-        { id: 'kutu_daun', name: 'Kutu Daun/Aphid', type: 'serangga', target: ['cabai', 'sayuran'], severity: 'sedang', icon: '🐜', symptoms: 'Daun menggulung', solution: 'Imidacloprid, sabun', price: 65000 },
-        { id: 'lalat_buah', name: 'Lalat Buah', type: 'serangga', target: ['cabai', 'mangga', 'jeruk'], severity: 'tinggi', icon: '🪰', symptoms: 'Buah busuk', solution: 'Perangkap metil eugenol', price: 78000 },
-        { id: 'ulat_grayak', name: 'Ulat Grayak', type: 'serangga', target: ['cabai', 'kedelai'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun berlubang', solution: 'Bt, Spinosad', price: 95000 },
-        { id: 'tungau', name: 'Tungau Merah', type: 'arakhnida', target: ['cabai', 'tomat'], severity: 'sedang', icon: '🕷️', symptoms: 'Daun keperakan', solution: 'Abamectin, minyak neem', price: 88000 },
+        { id: 'thrips', name: 'Thrips', type: 'serangga', target: ['cabai', 'bawang'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun keriting', solution: 'Abamectin, mulsa',  },
+        { id: 'kutu_daun', name: 'Kutu Daun/Aphid', type: 'serangga', target: ['cabai', 'sayuran'], severity: 'sedang', icon: '🐜', symptoms: 'Daun menggulung', solution: 'Imidacloprid, sabun',  },
+        { id: 'lalat_buah', name: 'Lalat Buah', type: 'serangga', target: ['cabai', 'mangga', 'jeruk'], severity: 'tinggi', icon: '🪰', symptoms: 'Buah busuk', solution: 'Perangkap metil eugenol',  },
+        { id: 'ulat_grayak', name: 'Ulat Grayak', type: 'serangga', target: ['cabai', 'kedelai'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun berlubang', solution: 'Bt, Spinosad',  },
+        { id: 'tungau', name: 'Tungau Merah', type: 'arakhnida', target: ['cabai', 'tomat'], severity: 'sedang', icon: '🕷️', symptoms: 'Daun keperakan', solution: 'Abamectin, minyak neem',  },
 
         // HAMA BAWANG
-        { id: 'orong_orong', name: 'Orong-orong', type: 'serangga', target: ['bawang', 'sayuran'], severity: 'sedang', icon: '🦗', symptoms: 'Akar terpotong', solution: 'Karbofuran', price: 55000 },
-        { id: 'ulat_bawang', name: 'Ulat Bawang', type: 'serangga', target: ['bawang'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun berlubang', solution: 'Klorantraniliprol', price: 125000 },
+        { id: 'orong_orong', name: 'Orong-orong', type: 'serangga', target: ['bawang', 'sayuran'], severity: 'sedang', icon: '🦗', symptoms: 'Akar terpotong', solution: 'Karbofuran',  },
+        { id: 'ulat_bawang', name: 'Ulat Bawang', type: 'serangga', target: ['bawang'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun berlubang', solution: 'Klorantraniliprol',  },
 
         // HAMA JAGUNG
-        { id: 'penggerek_jagung', name: 'Penggerek Batang Jagung', type: 'serangga', target: ['jagung'], severity: 'tinggi', icon: '🐛', symptoms: 'Batang patah', solution: 'Fipronil, Bt', price: 110000 },
-        { id: 'ulat_tongkol', name: 'Ulat Tongkol', type: 'serangga', target: ['jagung'], severity: 'tinggi', icon: '🐛', symptoms: 'Tongkol rusak', solution: 'Spinosad, Indoxacarb', price: 115000 },
-        { id: 'fall_armyworm', name: 'Fall Armyworm', type: 'serangga', target: ['jagung', 'padi'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun habis dimakan', solution: 'Emamektin benzoat', price: 145000 },
+        { id: 'penggerek_jagung', name: 'Penggerek Batang Jagung', type: 'serangga', target: ['jagung'], severity: 'tinggi', icon: '🐛', symptoms: 'Batang patah', solution: 'Fipronil, Bt',  },
+        { id: 'ulat_tongkol', name: 'Ulat Tongkol', type: 'serangga', target: ['jagung'], severity: 'tinggi', icon: '🐛', symptoms: 'Tongkol rusak', solution: 'Spinosad, Indoxacarb',  },
+        { id: 'fall_armyworm', name: 'Fall Armyworm', type: 'serangga', target: ['jagung', 'padi'], severity: 'tinggi', icon: '🐛', symptoms: 'Daun habis dimakan', solution: 'Emamektin benzoat',  },
 
         // HAMA KEDELAI
-        { id: 'kepik_polong', name: 'Kepik Polong', type: 'serangga', target: ['kedelai'], severity: 'tinggi', icon: '🦗', symptoms: 'Polong kosong', solution: 'Sipermetrin', price: 75000 },
-        { id: 'penggerek_polong', name: 'Penggerek Polong', type: 'serangga', target: ['kedelai'], severity: 'tinggi', icon: '🐛', symptoms: 'Polong berlubang', solution: 'Klorantraniliprol', price: 125000 },
+        { id: 'kepik_polong', name: 'Kepik Polong', type: 'serangga', target: ['kedelai'], severity: 'tinggi', icon: '🦗', symptoms: 'Polong kosong', solution: 'Sipermetrin',  },
+        { id: 'penggerek_polong', name: 'Penggerek Polong', type: 'serangga', target: ['kedelai'], severity: 'tinggi', icon: '🐛', symptoms: 'Polong berlubang', solution: 'Klorantraniliprol',  },
 
         // HAMA TOMAT
-        { id: 'lalat_penggorok', name: 'Lalat Penggorok Daun', type: 'serangga', target: ['tomat', 'sayuran'], severity: 'sedang', icon: '🪰', symptoms: 'Jalur putih di daun', solution: 'Abamectin, cyromazine', price: 92000 },
-        { id: 'kutu_kebul', name: 'Kutu Kebul', type: 'serangga', target: ['tomat', 'cabai'], severity: 'tinggi', icon: '🪰', symptoms: 'Embun jelaga, virus', solution: 'Imidacloprid, minyak', price: 68000 },
+        { id: 'lalat_penggorok', name: 'Lalat Penggorok Daun', type: 'serangga', target: ['tomat', 'sayuran'], severity: 'sedang', icon: '🪰', symptoms: 'Jalur putih di daun', solution: 'Abamectin, cyromazine',  },
+        { id: 'kutu_kebul', name: 'Kutu Kebul', type: 'serangga', target: ['tomat', 'cabai'], severity: 'tinggi', icon: '🪰', symptoms: 'Embun jelaga, virus', solution: 'Imidacloprid, minyak',  },
 
         // HAMA BUAH
-        { id: 'penggerek_buah', name: 'Penggerek Buah Kakao', type: 'serangga', target: ['kakao'], severity: 'tinggi', icon: '🐛', symptoms: 'Buah busuk', solution: 'Sanitasi, pemangkasan', price: 85000 },
-        { id: 'penggerek_kopi', name: 'Penggerek Buah Kopi', type: 'serangga', target: ['kopi'], severity: 'tinggi', icon: '🐛', symptoms: 'Biji berlubang', solution: 'Beauveria bassiana', price: 95000 },
-        { id: 'kumbang_badak', name: 'Kumbang Badak', type: 'serangga', target: ['kelapa'], severity: 'tinggi', icon: '🪲', symptoms: 'Pucuk mati', solution: 'Metarhizium, sanitasi', price: 75000 },
+        { id: 'penggerek_buah', name: 'Penggerek Buah Kakao', type: 'serangga', target: ['kakao'], severity: 'tinggi', icon: '🐛', symptoms: 'Buah busuk', solution: 'Sanitasi, pemangkasan',  },
+        { id: 'penggerek_kopi', name: 'Penggerek Buah Kopi', type: 'serangga', target: ['kopi'], severity: 'tinggi', icon: '🐛', symptoms: 'Biji berlubang', solution: 'Beauveria bassiana',  },
+        { id: 'kumbang_badak', name: 'Kumbang Badak', type: 'serangga', target: ['kelapa'], severity: 'tinggi', icon: '🪲', symptoms: 'Pucuk mati', solution: 'Metarhizium, sanitasi',  },
 
         // PENYAKIT (masuk kategori hama)
-        { id: 'blast', name: 'Penyakit Blast', type: 'jamur', target: ['padi'], severity: 'tinggi', icon: '🍄', symptoms: 'Bercak daun, leher patah', solution: 'Trisiklazol, varietas tahan', price: 115000 },
-        { id: 'hawar_daun', name: 'Hawar Daun Bakteri', type: 'bakteri', target: ['padi'], severity: 'tinggi', icon: '🦠', symptoms: 'Daun menggulung', solution: 'Streptomisin, varietas tahan', price: 125000 },
-        { id: 'tungro', name: 'Virus Tungro', type: 'virus', target: ['padi'], severity: 'tinggi', icon: '🧬', symptoms: 'Daun kuning-oranye', solution: 'Kontrol wereng, varietas', price: 95000 },
-        { id: 'antraknosa', name: 'Antraknosa', type: 'jamur', target: ['cabai', 'mangga'], severity: 'tinggi', icon: '🍄', symptoms: 'Bercak hitam buah', solution: 'Mankozeb, Propineb', price: 78000 },
-        { id: 'busuk_buah', name: 'Busuk Buah', type: 'jamur', target: ['tomat', 'cabai'], severity: 'tinggi', icon: '🍄', symptoms: 'Buah membusuk', solution: 'Mankozeb, drainase', price: 72000 },
-        { id: 'layu_fusarium', name: 'Layu Fusarium', type: 'jamur', target: ['tomat', 'pisang'], severity: 'tinggi', icon: '🍄', symptoms: 'Tanaman layu', solution: 'Trichoderma, rotasi', price: 85000 },
-        { id: 'layu_bakteri', name: 'Layu Bakteri', type: 'bakteri', target: ['tomat', 'kentang'], severity: 'tinggi', icon: '🦠', symptoms: 'Layu mendadak', solution: 'Rotasi, varietas tahan', price: 92000 },
-        { id: 'embun_tepung', name: 'Embun Tepung', type: 'jamur', target: ['mentimun', 'semangka'], severity: 'sedang', icon: '🍄', symptoms: 'Tepung putih di daun', solution: 'Difenokonazol', price: 68000 },
-        { id: 'bercak_daun', name: 'Bercak Daun', type: 'jamur', target: ['jagung', 'padi'], severity: 'sedang', icon: '🍄', symptoms: 'Bercak coklat', solution: 'Mankozeb, Propikonazol', price: 72000 },
-        { id: 'karat_daun', name: 'Karat Daun', type: 'jamur', target: ['jagung', 'kedelai'], severity: 'sedang', icon: '🍄', symptoms: 'Pustul oranye', solution: 'Trifloksistrobin', price: 95000 },
-        { id: 'bulai', name: 'Bulai/Downy Mildew', type: 'jamur', target: ['jagung'], severity: 'tinggi', icon: '🍄', symptoms: 'Garis putih', solution: 'Metalaxyl, benih bermutu', price: 88000 },
-        { id: 'busuk_pangkal', name: 'Busuk Pangkal Batang', type: 'jamur', target: ['cabai', 'tomat'], severity: 'tinggi', icon: '🍄', symptoms: 'Pangkal membusuk', solution: 'Drainase, Trichoderma', price: 75000 },
-        { id: 'virus_gemini', name: 'Virus Gemini', type: 'virus', target: ['cabai', 'tomat'], severity: 'tinggi', icon: '🧬', symptoms: 'Daun keriting kuning', solution: 'Kontrol kutu kebul', price: 68000 },
-        { id: 'virus_cmv', name: 'Virus CMV', type: 'virus', target: ['mentimun', 'melon'], severity: 'tinggi', icon: '🧬', symptoms: 'Mosaik', solution: 'Kontrol aphid', price: 72000 },
-        { id: 'nematoda', name: 'Nematoda Akar', type: 'parasit', target: ['tomat', 'cabai'], severity: 'sedang', icon: '🪱', symptoms: 'Puru akar', solution: 'Rotasi, solarisasi', price: 55000 }
+        { id: 'blast', name: 'Penyakit Blast', type: 'jamur', target: ['padi'], severity: 'tinggi', icon: '🍄', symptoms: 'Bercak daun, leher patah', solution: 'Trisiklazol, varietas tahan',  },
+        { id: 'hawar_daun', name: 'Hawar Daun Bakteri', type: 'bakteri', target: ['padi'], severity: 'tinggi', icon: '🦠', symptoms: 'Daun menggulung', solution: 'Streptomisin, varietas tahan',  },
+        { id: 'tungro', name: 'Virus Tungro', type: 'virus', target: ['padi'], severity: 'tinggi', icon: '🧬', symptoms: 'Daun kuning-oranye', solution: 'Kontrol wereng, varietas',  },
+        { id: 'antraknosa', name: 'Antraknosa', type: 'jamur', target: ['cabai', 'mangga'], severity: 'tinggi', icon: '🍄', symptoms: 'Bercak hitam buah', solution: 'Mankozeb, Propineb',  },
+        { id: 'busuk_buah', name: 'Busuk Buah', type: 'jamur', target: ['tomat', 'cabai'], severity: 'tinggi', icon: '🍄', symptoms: 'Buah membusuk', solution: 'Mankozeb, drainase',  },
+        { id: 'layu_fusarium', name: 'Layu Fusarium', type: 'jamur', target: ['tomat', 'pisang'], severity: 'tinggi', icon: '🍄', symptoms: 'Tanaman layu', solution: 'Trichoderma, rotasi',  },
+        { id: 'layu_bakteri', name: 'Layu Bakteri', type: 'bakteri', target: ['tomat', 'kentang'], severity: 'tinggi', icon: '🦠', symptoms: 'Layu mendadak', solution: 'Rotasi, varietas tahan',  },
+        { id: 'embun_tepung', name: 'Embun Tepung', type: 'jamur', target: ['mentimun', 'semangka'], severity: 'sedang', icon: '🍄', symptoms: 'Tepung putih di daun', solution: 'Difenokonazol',  },
+        { id: 'bercak_daun', name: 'Bercak Daun', type: 'jamur', target: ['jagung', 'padi'], severity: 'sedang', icon: '🍄', symptoms: 'Bercak coklat', solution: 'Mankozeb, Propikonazol',  },
+        { id: 'karat_daun', name: 'Karat Daun', type: 'jamur', target: ['jagung', 'kedelai'], severity: 'sedang', icon: '🍄', symptoms: 'Pustul oranye', solution: 'Trifloksistrobin',  },
+        { id: 'bulai', name: 'Bulai/Downy Mildew', type: 'jamur', target: ['jagung'], severity: 'tinggi', icon: '🍄', symptoms: 'Garis putih', solution: 'Metalaxyl, benih bermutu',  },
+        { id: 'busuk_pangkal', name: 'Busuk Pangkal Batang', type: 'jamur', target: ['cabai', 'tomat'], severity: 'tinggi', icon: '🍄', symptoms: 'Pangkal membusuk', solution: 'Drainase, Trichoderma',  },
+        { id: 'virus_gemini', name: 'Virus Gemini', type: 'virus', target: ['cabai', 'tomat'], severity: 'tinggi', icon: '🧬', symptoms: 'Daun keriting kuning', solution: 'Kontrol kutu kebul',  },
+        { id: 'virus_cmv', name: 'Virus CMV', type: 'virus', target: ['mentimun', 'melon'], severity: 'tinggi', icon: '🧬', symptoms: 'Mosaik', solution: 'Kontrol aphid',  },
+        { id: 'nematoda', name: 'Nematoda Akar', type: 'parasit', target: ['tomat', 'cabai'], severity: 'sedang', icon: '🪱', symptoms: 'Puru akar', solution: 'Rotasi, solarisasi',  }
     ],
 
     // ========== DATABASE PUPUK (200+ entries) ==========
@@ -520,39 +526,39 @@ const CommodityData = {
         { id: 'npk_sawit', name: 'NPK Sawit (12-12-17+2MgO)', type: 'majemuk', nutrient: 'NPK+Mg', content: 17, dosis: '2-3 kg/pohon/th', icon: '💎', usage: 'Kelapa sawit' },
 
         // PUPUK ORGANIK
-        { id: 'kompos', name: 'Kompos', type: 'organik', nutrient: 'C-organik', content: 15, dosis: '10-20 ton/ha', icon: '🌱', price: 1500, usage: 'Perbaikan struktur tanah' },
-        { id: 'pupuk_kandang_sapi', name: 'Pupuk Kandang Sapi', type: 'organik', nutrient: 'C-organik', content: 12, dosis: '10-20 ton/ha', icon: '🐄', price: 800, usage: 'Pupuk dasar organik' },
-        { id: 'pupuk_kandang_ayam', name: 'Pupuk Kandang Ayam', type: 'organik', nutrient: 'NPK', content: 3, dosis: '5-10 ton/ha', icon: '🐔', price: 1200, usage: 'Nitrogen organik tinggi' },
-        { id: 'pupuk_kandang_kambing', name: 'Pupuk Kandang Kambing', type: 'organik', nutrient: 'NPK', content: 2, dosis: '10-15 ton/ha', icon: '🐐', price: 1000, usage: 'Potasium organik tinggi' },
-        { id: 'bokashi', name: 'Bokashi', type: 'organik', nutrient: 'C-organik', content: 20, dosis: '5-10 ton/ha', icon: '🌱', price: 3000, usage: 'Pupuk fermentasi EM4' },
-        { id: 'petroganik', name: 'Petroganik', type: 'organik', nutrient: 'C-organik', content: 12.5, dosis: '500-1000 kg/ha', icon: '🌱', price: 2500, usage: 'Pupuk organik granul' },
-        { id: 'guano', name: 'Guano', type: 'organik', nutrient: 'P', content: 25, dosis: '500-1000 kg/ha', icon: '🦇', price: 5000, usage: 'Fosfat organik tinggi' },
-        { id: 'kascing', name: 'Kascing', type: 'organik', nutrient: 'C-organik', content: 25, dosis: '5-10 ton/ha', icon: '🪱', price: 4000, usage: 'Pupuk cacing berkualitas' },
-        { id: 'pupuk_hijau', name: 'Pupuk Hijau (Azolla)', type: 'organik', nutrient: 'N', content: 3, dosis: 'Segar di lahan', icon: '🌿', price: 500, usage: 'Nitrogen alami sawah' },
+        { id: 'kompos', name: 'Kompos', type: 'organik', nutrient: 'C-organik', content: 15, dosis: '10-20 ton/ha', icon: '🌱',  usage: 'Perbaikan struktur tanah' },
+        { id: 'pupuk_kandang_sapi', name: 'Pupuk Kandang Sapi', type: 'organik', nutrient: 'C-organik', content: 12, dosis: '10-20 ton/ha', icon: '🐄',  usage: 'Pupuk dasar organik' },
+        { id: 'pupuk_kandang_ayam', name: 'Pupuk Kandang Ayam', type: 'organik', nutrient: 'NPK', content: 3, dosis: '5-10 ton/ha', icon: '🐔',  usage: 'Nitrogen organik tinggi' },
+        { id: 'pupuk_kandang_kambing', name: 'Pupuk Kandang Kambing', type: 'organik', nutrient: 'NPK', content: 2, dosis: '10-15 ton/ha', icon: '🐐',  usage: 'Potasium organik tinggi' },
+        { id: 'bokashi', name: 'Bokashi', type: 'organik', nutrient: 'C-organik', content: 20, dosis: '5-10 ton/ha', icon: '🌱',  usage: 'Pupuk fermentasi EM4' },
+        { id: 'petroganik', name: 'Petroganik', type: 'organik', nutrient: 'C-organik', content: 12.5, dosis: '500-1000 kg/ha', icon: '🌱',  usage: 'Pupuk organik granul' },
+        { id: 'guano', name: 'Guano', type: 'organik', nutrient: 'P', content: 25, dosis: '500-1000 kg/ha', icon: '🦇',  usage: 'Fosfat organik tinggi' },
+        { id: 'kascing', name: 'Kascing', type: 'organik', nutrient: 'C-organik', content: 25, dosis: '5-10 ton/ha', icon: '🪱',  usage: 'Pupuk cacing berkualitas' },
+        { id: 'pupuk_hijau', name: 'Pupuk Hijau (Azolla)', type: 'organik', nutrient: 'N', content: 3, dosis: 'Segar di lahan', icon: '🌿',  usage: 'Nitrogen alami sawah' },
 
         // PUPUK MIKRO
-        { id: 'gandasil_d', name: 'Gandasil D', type: 'daun', nutrient: 'NPK+mikro', content: 20, dosis: '2-3 g/liter', icon: '🍃', price: 25000, usage: 'Pupuk daun fase vegetatif' },
-        { id: 'gandasil_b', name: 'Gandasil B', type: 'daun', nutrient: 'PK+mikro', content: 20, dosis: '2-3 g/liter', icon: '🌸', price: 28000, usage: 'Pupuk daun pembungaan' },
-        { id: 'growmore_vegetatif', name: 'Growmore Vegetatif (32-10-10)', type: 'daun', nutrient: 'NPK', content: 32, dosis: '1-2 g/liter', icon: '🍃', price: 55000, usage: 'Pertumbuhan daun' },
-        { id: 'growmore_buah', name: 'Growmore Buah (6-30-30)', type: 'daun', nutrient: 'PK', content: 30, dosis: '1-2 g/liter', icon: '🍎', price: 55000, usage: 'Pembungaan pembuahan' },
-        { id: 'boron', name: 'Boron (B)', type: 'mikro', nutrient: 'B', content: 10, dosis: '1-2 kg/ha', icon: '💧', price: 45000, usage: 'Cegah bunga rontok' },
-        { id: 'zn_sulfat', name: 'ZnSO4', type: 'mikro', nutrient: 'Zn', content: 22, dosis: '5-10 kg/ha', icon: '⚗️', price: 35000, usage: 'Defisiensi seng' },
-        { id: 'fe_sulfat', name: 'FeSO4', type: 'mikro', nutrient: 'Fe', content: 20, dosis: '5-10 kg/ha', icon: '⚗️', price: 25000, usage: 'Defisiensi besi' },
-        { id: 'mg_sulfat', name: 'MgSO4/Kiserit', type: 'sekunder', nutrient: 'Mg+S', content: 25, dosis: '25-50 kg/ha', icon: '⚗️', price: 12000, usage: 'Magnesium untuk klorofil' },
-        { id: 'kalsium', name: 'Kalsium Nitrat', type: 'sekunder', nutrient: 'Ca+N', content: 15, dosis: '50-100 kg/ha', icon: '⚗️', price: 15000, usage: 'Kalsium untuk buah' },
+        { id: 'gandasil_d', name: 'Gandasil D', type: 'daun', nutrient: 'NPK+mikro', content: 20, dosis: '2-3 g/liter', icon: '🍃',  usage: 'Pupuk daun fase vegetatif' },
+        { id: 'gandasil_b', name: 'Gandasil B', type: 'daun', nutrient: 'PK+mikro', content: 20, dosis: '2-3 g/liter', icon: '🌸',  usage: 'Pupuk daun pembungaan' },
+        { id: 'growmore_vegetatif', name: 'Growmore Vegetatif (32-10-10)', type: 'daun', nutrient: 'NPK', content: 32, dosis: '1-2 g/liter', icon: '🍃',  usage: 'Pertumbuhan daun' },
+        { id: 'growmore_buah', name: 'Growmore Buah (6-30-30)', type: 'daun', nutrient: 'PK', content: 30, dosis: '1-2 g/liter', icon: '🍎',  usage: 'Pembungaan pembuahan' },
+        { id: 'boron', name: 'Boron (B)', type: 'mikro', nutrient: 'B', content: 10, dosis: '1-2 kg/ha', icon: '💧',  usage: 'Cegah bunga rontok' },
+        { id: 'zn_sulfat', name: 'ZnSO4', type: 'mikro', nutrient: 'Zn', content: 22, dosis: '5-10 kg/ha', icon: '⚗️',  usage: 'Defisiensi seng' },
+        { id: 'fe_sulfat', name: 'FeSO4', type: 'mikro', nutrient: 'Fe', content: 20, dosis: '5-10 kg/ha', icon: '⚗️',  usage: 'Defisiensi besi' },
+        { id: 'mg_sulfat', name: 'MgSO4/Kiserit', type: 'sekunder', nutrient: 'Mg+S', content: 25, dosis: '25-50 kg/ha', icon: '⚗️',  usage: 'Magnesium untuk klorofil' },
+        { id: 'kalsium', name: 'Kalsium Nitrat', type: 'sekunder', nutrient: 'Ca+N', content: 15, dosis: '50-100 kg/ha', icon: '⚗️',  usage: 'Kalsium untuk buah' },
 
         // PUPUK SLOW RELEASE
-        { id: 'osmocote', name: 'Osmocote', type: 'slow_release', nutrient: 'NPK', content: 14, dosis: '5-10 g/tanaman', icon: '💊', price: 85000, usage: 'Pupuk lepas lambat' },
-        { id: 'dekastar', name: 'Dekastar', type: 'slow_release', nutrient: 'NPK', content: 17, dosis: '5-10 g/tanaman', icon: '💊', price: 75000, usage: 'Pembibitan, pot' },
-        { id: 'basacote', name: 'Basacote', type: 'slow_release', nutrient: 'NPK', content: 16, dosis: '3-5 g/tanaman', icon: '💊', price: 95000, usage: 'Premium 6 bulan' },
+        { id: 'osmocote', name: 'Osmocote', type: 'slow_release', nutrient: 'NPK', content: 14, dosis: '5-10 g/tanaman', icon: '💊',  usage: 'Pupuk lepas lambat' },
+        { id: 'dekastar', name: 'Dekastar', type: 'slow_release', nutrient: 'NPK', content: 17, dosis: '5-10 g/tanaman', icon: '💊',  usage: 'Pembibitan, pot' },
+        { id: 'basacote', name: 'Basacote', type: 'slow_release', nutrient: 'NPK', content: 16, dosis: '3-5 g/tanaman', icon: '💊',  usage: 'Premium 6 bulan' },
 
         // PUPUK HAYATI
-        { id: 'rhizobium', name: 'Rhizobium', type: 'hayati', nutrient: 'N-fiksasi', content: 0, dosis: '100 g/ha benih', icon: '🦠', price: 25000, usage: 'Kacang-kacangan' },
-        { id: 'azotobacter', name: 'Azotobacter', type: 'hayati', nutrient: 'N-fiksasi', content: 0, dosis: '5-10 kg/ha', icon: '🦠', price: 35000, usage: 'Pengikat nitrogen udara' },
-        { id: 'mikoriza', name: 'Mikoriza', type: 'hayati', nutrient: 'P-solubilizer', content: 0, dosis: '5-10 kg/ha', icon: '🍄', price: 45000, usage: 'Penyerap fosfat' },
-        { id: 'trichoderma', name: 'Trichoderma', type: 'hayati', nutrient: 'Bio-kontrol', content: 0, dosis: '5-10 kg/ha', icon: '🍄', price: 35000, usage: 'Antagonis jamur patogen' },
-        { id: 'pgpr', name: 'PGPR', type: 'hayati', nutrient: 'Multi', content: 0, dosis: '5 ml/liter', icon: '🦠', price: 45000, usage: 'Pemacu pertumbuhan' },
-        { id: 'em4', name: 'EM4 Pertanian', type: 'hayati', nutrient: 'Multi', content: 0, dosis: '10-20 liter/ha', icon: '🦠', price: 25000, usage: 'Fermentasi, dekomposer' }
+        { id: 'rhizobium', name: 'Rhizobium', type: 'hayati', nutrient: 'N-fiksasi', content: 0, dosis: '100 g/ha benih', icon: '🦠',  usage: 'Kacang-kacangan' },
+        { id: 'azotobacter', name: 'Azotobacter', type: 'hayati', nutrient: 'N-fiksasi', content: 0, dosis: '5-10 kg/ha', icon: '🦠',  usage: 'Pengikat nitrogen udara' },
+        { id: 'mikoriza', name: 'Mikoriza', type: 'hayati', nutrient: 'P-solubilizer', content: 0, dosis: '5-10 kg/ha', icon: '🍄',  usage: 'Penyerap fosfat' },
+        { id: 'trichoderma', name: 'Trichoderma', type: 'hayati', nutrient: 'Bio-kontrol', content: 0, dosis: '5-10 kg/ha', icon: '🍄',  usage: 'Antagonis jamur patogen' },
+        { id: 'pgpr', name: 'PGPR', type: 'hayati', nutrient: 'Multi', content: 0, dosis: '5 ml/liter', icon: '🦠',  usage: 'Pemacu pertumbuhan' },
+        { id: 'em4', name: 'EM4 Pertanian', type: 'hayati', nutrient: 'Multi', content: 0, dosis: '10-20 liter/ha', icon: '🦠',  usage: 'Fermentasi, dekomposer' }
     ],
 
     // ========== DATABASE CARA TANAM (200+ entries) ==========
@@ -629,16 +635,8 @@ const CommodityData = {
     },
 
     getPriceComparison(item, type = 'hama') {
-        const db = type === 'hama' ? this.hamaDatabase : this.pupukDatabase;
-        const found = db.find(d => d.id === item);
-        if (!found) return null;
-        return {
-            name: found.name,
-            priceBPS: found.priceBPS,
-            priceWB: found.priceWB,
-            difference: found.priceBPS - found.priceWB,
-            percentDiff: ((found.priceBPS - found.priceWB) / found.priceWB * 100).toFixed(1)
-        };
+        // Feature disabled - strict official data only
+        return null;
     },
 
     searchDatabase(query, type = 'all') {
@@ -683,4 +681,3 @@ console.log('📦 Commodity Data loaded:', CommodityData.commodities.length, 'ko
     CommodityData.hamaDatabase?.length || 0, 'hama,',
     CommodityData.pupukDatabase?.length || 0, 'pupuk,',
     CommodityData.caraTanamDatabase?.length || 0, 'cara tanam');
-
