@@ -642,22 +642,18 @@
     <div id="pw-overlay">
       <div class="pw-box">
         <h2>🔒 Smart Class IoT</h2>
-        <p>Masukkan peran dan password untuk akses dashboard</p>
+        <p>Pilih peran untuk akses dashboard</p>
         <select id="u-input">
           <option value="" disabled selected>Pilih Peran Login...</option>
           <option value="admin">👑 Admin</option>
           <option value="guru">👨‍🏫 Guru</option>
           <option value="siswa">🎓 Siswa</option>
         </select>
-        <div class="pw-input-wrap">
-          <input id="pw-input" type="password" placeholder="Masukkan password..."
-            onkeydown="if(event.key==='Enter')checkLogin()">
-          <button class="pw-toggle" onclick="togglePassword()" title="Lihat/Sembunyikan password">👁️</button>
-        </div>
+        <div class="pw-input-wrap" style="display:none"></div>
         <button onclick="checkLogin()">🔓 Masuk Dashboard</button>
         <div class="pw-err" id="pw-err">❌ Username/Password salah!</div>
         <div style="margin-top:12px;font-size:0.75em;color:#64748b">
-          <small>💡 Petunjuk: Pilih peran lalu masukkan password yang sesuai</small>
+          <small>💡 Petunjuk: Pilih peran login (tanpa password)</small>
         </div>
       </div>
     </div>
@@ -1195,11 +1191,10 @@
     }
 
     // ========== ROLE-BASED ACCESS ==========
-    // Passwords sesuai kelas_config.json
     const ROLES = {
-      admin: { pw: 'admin123', level: 3, label: '👑 Admin', color: '#ef4444' },
-      guru: { pw: 'guru123', level: 2, label: '👨‍🏫 Guru', color: '#f59e0b' },
-      siswa: { pw: 'siswa123', level: 1, label: '🎓 Siswa', color: '#3b82f6' }
+      admin: { level: 3, label: '👑 Admin', color: '#ef4444' },
+      guru: { level: 2, label: '👨‍🏫 Guru', color: '#f59e0b' },
+      siswa: { level: 1, label: '🎓 Siswa', color: '#3b82f6' }
     };
 
     let currentRole = sessionStorage.getItem('sc_role') || null;
@@ -1208,27 +1203,11 @@
     // ========== ADMIN LOGIN ==========
     let isLoggedIn = sessionStorage.getItem('sc_login') === 'true';
 
-    // Toggle password visibility
-    function togglePassword() {
-      const pwInput = document.getElementById('pw-input');
-      const toggleBtn = document.querySelector('.pw-toggle');
-      if (pwInput.type === 'password') {
-        pwInput.type = 'text';
-        toggleBtn.textContent = '🙈';
-      } else {
-        pwInput.type = 'password';
-        toggleBtn.textContent = '👁️';
-      }
-    }
-
     function checkLogin() {
       const uInput = document.getElementById('u-input');
-      const pInput = document.getElementById('pw-input');
       const errDiv = document.getElementById('pw-err');
       
-      // Username case insensitive, password case sensitive (sesuai config)
       const u = uInput.value.trim().toLowerCase();
-      const p = pInput.value.trim(); // Password tetap case sensitive
       
       // Validasi input
       if (!u) {
@@ -1237,20 +1216,7 @@
         setTimeout(() => errDiv.style.display = 'none', 3000);
         return;
       }
-      
-      if (!p) {
-        errDiv.style.display = 'block';
-        errDiv.textContent = '⚠️ Password tidak boleh kosong!';
-        setTimeout(() => errDiv.style.display = 'none', 3000);
-        pInput.focus();
-        return;
-      }
-
-      // Cek role dan password
-      let role = null;
-      if (u === 'admin' && p === ROLES.admin.pw) role = 'admin';
-      else if (u === 'guru' && p === ROLES.guru.pw) role = 'guru';
-      else if (u === 'siswa' && p === ROLES.siswa.pw) role = 'siswa';
+      const role = ROLES[u] ? u : null;
 
       if (role) {
         sessionStorage.setItem('sc_role', role);
@@ -1263,19 +1229,12 @@
         applyRole(role);
         lg('🔓 Login Berhasil sebagai ' + ROLES[role].label);
         
-        // Clear inputs
+        // Clear input
         uInput.value = '';
-        pInput.value = '';
-        
-        // Reset password visibility
-        document.getElementById('pw-input').type = 'password';
-        document.querySelector('.pw-toggle').textContent = '👁️';
       } else {
         errDiv.style.display = 'block';
-        errDiv.innerHTML = '❌ <b>Login Gagal!</b><br>Password salah untuk peran ' + u.toUpperCase();
+        errDiv.innerHTML = '❌ <b>Login Gagal!</b><br>Peran tidak valid.';
         setTimeout(() => errDiv.style.display = 'none', 3000);
-        pInput.value = '';
-        pInput.focus();
       }
     }
 
