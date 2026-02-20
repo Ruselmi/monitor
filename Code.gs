@@ -63,6 +63,11 @@ function doPost(e) {
     Logger.log('doPost called. Raw body: ' + e.postData.contents);
     const data = JSON.parse(e.postData.contents);
     Logger.log('Parsed data: ' + JSON.stringify(data));
+
+    // Handle Telegram webhook payload (no API key required)
+    if (isTelegramUpdate(data)) {
+      return handleTelegramWebhook(data);
+    }
     
     // 1. Verify API Key (Security)
     if (data.key !== API_KEY) {
@@ -91,6 +96,35 @@ function doPost(e) {
   } catch (error) {
     Logger.log('doPost ERROR: ' + error.message + ' | Stack: ' + error.stack);
     return jsonResponse({ status: 'error', message: error.message });
+  }
+}
+
+function isTelegramUpdate(data) {
+  return !!(data && (data.message || data.edited_message || data.callback_query));
+}
+
+function handleTelegramWebhook(update) {
+  try {
+    const msg = update.message || update.edited_message;
+    if (!msg || !msg.text) return jsonResponse({ status: 'ignored', reason: 'no_text' });
+
+    const text = msg.text.trim();
+    if (!text.startsWith('/')) return jsonResponse({ status: 'ignored', reason: 'not_command' });
+
+    // Telegram can send command format: /status@botname
+    const firstSpace = text.indexOf(' ');
+    const firstToken = (firstSpace >= 0 ? text.substring(0, firstSpace) : text).trim();
+    const commandToken = firstToken.includes('@') ? firstToken.split('@')[0] : firstToken;
+    const arg = firstSpace >= 0 ? text.substring(firstSpace + 1).trim() : '';
+    const normalizedCmd = commandToken + (arg ? ' ' + arg : '');
+
+    const reply = tgHandleCommand(normalizedCmd);
+    sendTelegramMessage(reply);
+
+    return jsonResponse({ status: 'ok', handled: normalizedCmd });
+  } catch (err) {
+    Logger.log('Telegram webhook error: ' + err.message);
+    return jsonResponse({ status: 'error', message: err.message });
   }
 }
 
@@ -297,6 +331,8 @@ const TG_ROUTE = {
   'export': tgCmdExport,
   'reset': tgCmdReset,
   'sendtg': tgCmdSendTG,
+  'history': tgCmdHistory,
+  'summary': tgCmdSummary,
   'log': tgCmdLog,
   'factory': tgCmdFactory,
   'help': tgCmdHelp
@@ -417,7 +453,71 @@ function tgCmdSendTG(arg) {
   } catch(e) { return '❌ Error: ' + e.message; }
 }
 
-function tgCmdLog(arg) { return '📜 Log: Cek Google Sheets'; }
+function tgCmdHistory(arg) {
+  try {
+    const limit = Math.max(1, Math.min(parseInt(arg || '10', 10) || 10, 20));
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) return '❌ Tidak ada data';
+
+    const startRow = Math.max(2, sheet.getLastRow() - limit + 1);
+    const data = sheet.getRange(startRow, 1, sheet.getLastRow() - startRow + 1, 17).getValues();
+
+    let msg = '📚 <b>HISTORY ' + data.length + ' DATA TERAKHIR</b>\n\n';
+    data.forEach((row, i) => {
+      msg += (i + 1) + '. ' + row[0].toString().substring(0, 16) +
+        ' | 🌡️' + row[2] + '°C | 💧' + row[3] + '% | 💨' + row[6] + ' | 🔥' + (row[7] == 0 ? 'Ya' : 'Tidak') + '\n';
+    });
+    return msg;
+  } catch (e) {
+    return '❌ Error: ' + e.message;
+  }
+}
+
+function tgCmdSummary(arg) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) return '❌ Tidak ada data';
+
+    const count = sheet.getLastRow() - 1;
+    const startRow = Math.max(2, sheet.getLastRow() - Math.min(count, 100) + 1);
+    const data = sheet.getRange(startRow, 1, sheet.getLastRow() - startRow + 1, 17).getValues();
+
+    const avgTemp = data.reduce((s, r) => s + Number(r[2] || 0), 0) / data.length;
+    const avgHum = data.reduce((s, r) => s + Number(r[3] || 0), 0) / data.length;
+    const maxGas = data.reduce((m, r) => Math.max(m, Number(r[6] || 0)), 0);
+    const flameCount = data.filter(r => Number(r[7]) === 0).length;
+    const last = data[data.length - 1];
+
+    return '📈 <b>SUMMARY MONITORING</b>\n\n' +
+      'Total Data: ' + count + '\n' +
+      'Rata2 Suhu: ' + avgTemp.toFixed(1) + '°C\n' +
+      'Rata2 Humidity: ' + avgHum.toFixed(1) + '%\n' +
+      'Gas Tertinggi: ' + maxGas + '\n' +
+      'Deteksi Flame: ' + flameCount + ' kali\n' +
+      'Update Terakhir: ' + last[0];
+  } catch (e) {
+    return '❌ Error: ' + e.message;
+  }
+}
+
+function tgCmdLog(arg) {
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+    if (!sheet || sheet.getLastRow() < 2) return '📜 Log kosong';
+    const d = sheet.getRange(sheet.getLastRow(), 1, 1, 17).getValues()[0];
+    return '📜 <b>LOG TERAKHIR</b>\n\n' +
+      'Waktu: ' + d[0] + '\n' +
+      'Device: ' + d[1] + '\n' +
+      'Temp/Hum: ' + d[2] + '°C / ' + d[3] + '%\n' +
+      'Gas/Flame/Sound: ' + d[6] + ' / ' + d[7] + ' / ' + d[9] + '\n' +
+      'RSSI: ' + d[14] + ' dBm';
+  } catch (e) {
+    return '❌ Error: ' + e.message;
+  }
+}
 function tgCmdFactory(arg) { const p = PropertiesService.getScriptProperties(); p.deleteProperty('wifi_ssid'); p.deleteProperty('wifi_pass'); setCommandForDevice('FACTORY'); return '🏭 Factory reset!'; }
 
 function tgCmdHelp(arg) {
@@ -452,6 +552,8 @@ function tgCmdHelp(arg) {
 /export - Kirim ke Sheet
 /reset - Hapus data
 /sendtg - Kirim ke Telegram
+/history - Riwayat data terakhir
+/summary - Ringkasan statistik
 /log - Lihat log
 /factory - Reset konfigurasi`;
 }
