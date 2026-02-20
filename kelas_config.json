@@ -1,0 +1,34 @@
+{
+  "kelas": {
+    "XIPA1": {
+      "nama": "X IPA 1",
+      "guru": ["budi", "andi"],
+      "spreadsheetId": "1hp3qIpknnBKUXElR5Bn2uiyYCiiY3tB4CHNEzua-k_8",
+      "sheetName": "XIPA1",
+      "deviceId": "ESP32_XIPA1",
+      "wifi": {"ssid": "ELSON", "pass": "elson250129"}
+    },
+    "XIPA2": {
+      "nama": "X IPA 2",
+      "guru": ["siti", "wati"],
+      "spreadsheetId": "1hp3qIpknnBKUXElR5Bn2uiyYCiiY3tB4CHNEzua-k_8",
+      "sheetName": "XIPA2",
+      "deviceId": "ESP32_XIPA2",
+      "wifi": {"ssid": "ELSON", "pass": "elson250129"}
+    },
+    "XIPS1": {
+      "nama": "X IPS 1",
+      "guru": ["pakhmad", "buani"],
+      "spreadsheetId": "1hp3qIpknnBKUXElR5Bn2uiyYCiiY3tB4CHNEzua-k_8",
+      "sheetName": "XIPS1",
+      "deviceId": "ESP32_XIPS1",
+      "wifi": {"ssid": "ELSON", "pass": "elson250129"}
+    }
+  },
+  "users": {
+    "admin": {"pass": "admin123", "role": "admin", "kelas": ["all"]},
+    "guru_xipa1": {"pass": "guru123", "role": "guru", "kelas": ["XIPA1"]},
+    "guru_xipa2": {"pass": "guru123", "role": "guru", "kelas": ["XIPA2"]},
+    "guru_xips1": {"pass": "guru123", "role": "guru", "kelas": ["XIPS1"]}
+  }
+}

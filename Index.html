@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Smart Class IoT Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 15px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #38bdf8;
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 1.8em;
+    }
+
+    h1 small {
+      display: block;
+      font-size: 0.5em;
+      color: #64748b;
+      font-weight: 400;
+      margin-top: 5px;
+    }
+
+    .card {
+      background: #1e293b;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border: 1px solid #334155;
+    }
+
+    .card h2 {
+      color: #38bdf8;
+      font-size: 1.05em;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 8px;
+    }
+
+    /* Sensor Grid */
+    .sensor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+
+    .sb {
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+      padding: 16px 12px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid #334155;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sb::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #38bdf8;
+    }
+
+    .sb .value {
+      font-size: 1.8em;
+      font-weight: 700;
+      color: #f1f5f9;
+      margin: 8px 0 4px;
+    }
+
+    .sb .label {
+      font-size: 0.75em;
+      color: #94a3b8;
+    }
+
+    .sb .do-status {
+      font-size: 0.7em;
+      margin-top: 6px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      display: inline-block;
+    }
+
+    .sb .safe {
+      background: #166534;
+      color: #4ade80;
+    }
+
+    .sb .danger {
+      background: #7f1d1d;
+      color: #fca5a5;
+      animation: blink 1s infinite;
+    }
+
+    .sb.warn {
+      border-color: #f59e0b;
+    }
+
+    .sb.warn::before {
+      background: #f59e0b;
+    }
+
+    .sb.alert {
+      border-color: #ef4444;
+      animation: pulse 1s infinite;
+    }
+
+    .sb.alert::before {
+      background: #ef4444;
+    }
+
+    @keyframes pulse {
+      50% {
+        transform: scale(1.02);
+      }
+    }
+
+    @keyframes blink {
+      50% {
+        opacity: 0.6;
+      }
+    }
+
+    /* Polarity */
+    .pol-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
+    }
+
+    .pol-item {
+      background: #334155;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85em;
+    }
+
+    .pol-item .name {
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .pol-badge {
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+
+    .pol-al {
+      background: #7f1d1d;
+      color: #fca5a5;
+    }
+
+    .pol-ah {
+      background: #166534;
+      color: #4ade80;
+    }
+
+    /* Music */
+    .music-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 8px;
+    }
+
+    .mbtn {
+      padding: 14px 8px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #fff;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .mbtn:hover {
+      transform: scale(1.05);
+    }
+
+    .mbtn:active {
+      transform: scale(0.95);
+      opacity: 0.8;
+    }
+
+    .m0 {
+      background: #6b7280
+    }
+
+    .m1 {
+      background: #22c55e
+    }
+
+    .m2 {
+      background: #ef4444
+    }
+
+    .m3 {
+      background: #3b82f6
+    }
+
+    .m4 {
+      background: #a855f7
+    }
+
+    .m5 {
+      background: #ec4899
+    }
+
+    .m6 {
+      background: #f97316
+    }
+
+    .m7 {
+      background: #14b8a6
+    }
+
+    .m8 {
+      background: #dc2626
+    }
+
+    .m9 {
+      background: #475569
+    }
+
+    /* Controls */
+    .ctrl-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cbtn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 600;
+      color: #fff;
+      transition: all 0.2s;
+    }
+
+    .cbtn:hover {
+      opacity: 0.85;
+    }
+
+    .cbtn.cal {
+      background: #3b82f6;
+    }
+
+    .cbtn.thr {
+      background: #8b5cf6;
+    }
+
+    /* Device Info */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .info-item {
+      background: #334155;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .info-item .iv {
+      font-size: 1.3em;
+      font-weight: 700;
+      color: #38bdf8;
+    }
+
+    .info-item .il {
+      font-size: 0.75em;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    /* Chart */
+    .chart-box {
+      height: 280px;
+      margin-top: 10px;
+    }
+
+    /* Log */
+    .log {
+      background: #0f172a;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 0.78em;
+      max-height: 180px;
+      overflow-y: auto;
+      color: #4ade80;
+      border: 1px solid #1e293b;
+    }
+
+    /* Input */
+    .cmd-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .cmd-row input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 0.9em;
+    }
+
+    .cmd-row button {
+      padding: 10px 18px;
+      background: #3b82f6;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* Status bar */
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8em;
+      margin-bottom: 16px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+    }
+
+    .dot-green {
+      background: #22c55e;
+    }
+
+    .dot-red {
+      background: #ef4444;
+    }
+
+    .dot-yellow {
+      background: #f59e0b;
+    }
+
+    /* Refresh */
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+      font-size: 1em;
+      font-weight: 600;
+      z-index: 100;
+    }
+
+    .fab:hover {
+      transform: scale(1.05);
+    }
+
+    #timestamp {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.8em;
+      margin-top: 8px;
+    }
+
+    .no-data {
+      text-align: center;
+      color: #f59e0b;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    /* Piano */
+    .piano-wrap {
+      overflow-x: auto;
+      padding: 10px 0;
+    }
+
+    .piano {
+      position: relative;
+      display: flex;
+      min-width: 616px;
+      height: 160px;
+      user-select: none;
+    }
+
+    .white-key {
+      width: 44px;
+      height: 160px;
+      background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+      border: 1px solid #94a3b8;
+      border-radius: 0 0 6px 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 8px;
+      transition: all 0.1s;
+      z-index: 1;
+    }
+
+    .white-key span {
+      font-size: 0.65em;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .white-key:hover {
+      background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%);
+    }
+
+    .white-key:active {
+      background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 100%);
+      transform: translateY(2px);
+    }
+
+    .black-key {
+      position: absolute;
+      width: 28px;
+      height: 100px;
+      background: linear-gradient(180deg, #334155 0%, #0f172a 100%);
+      border-radius: 0 0 4px 4px;
+      cursor: pointer;
+      z-index: 2;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding-bottom: 6px;
+      transition: all 0.1s;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    }
+
+    .black-key span {
+      font-size: 0.55em;
+      color: #94a3b8;
+      font-weight: 600;
+    }
+
+    .black-key:hover {
+      background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+    }
+
+    .black-key:active {
+      background: linear-gradient(180deg, #3b82f6 0%, #1d4ed8 100%);
+      transform: translateY(2px);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Password Gate */
+    #pw-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #pw-overlay.hidden {
+      display: none;
+    }
+
+    .pw-box {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      max-width: 350px;
+      width: 90%;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .pw-box h2 {
+      color: #f8fafc;
+      margin-bottom: 8px;
+    }
+
+    .pw-box p {
+      color: #94a3b8;
+      font-size: 0.85em;
+      margin-bottom: 16px;
+    }
+
+    .pw-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 1em;
+      text-align: center;
+      margin-bottom: 12px;
+      box-sizing: border-box;
+    }
+
+    .pw-box button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      color: white;
+      font-weight: bold;
+      font-size: 1em;
+      cursor: pointer;
+    }
+
+    .pw-box button:hover {
+      opacity: 0.9;
+    }
+
+    .pw-err {
+      color: #ef4444;
+      font-size: 0.85em;
+      margin-top: 8px;
+      display: none;
+    }
+
+    .pw-input-wrap {
+      position: relative;
+      width: 100%;
+      margin-bottom: 12px;
+    }
+
+    .pw-input-wrap input {
+      width: 100%;
+      padding: 12px 40px 12px 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 1em;
+      text-align: center;
+      box-sizing: border-box;
+    }
+
+    .pw-toggle {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 1.2em;
+      padding: 0;
+      width: auto;
+    }
+
+    .pw-toggle:hover {
+      color: #f8fafc;
+    }
+
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #475569;
+      background: #0f172a;
+      color: #f8fafc;
+      font-size: 1em;
+      margin-bottom: 12px;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    /* Ref table status */
+    .ref-ok {
+      color: #22c55e;
+      font-weight: bold;
+    }
+
+    .ref-warn {
+      color: #f59e0b;
+      font-weight: bold;
+    }
+
+    .ref-danger {
+      color: #ef4444;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Password Overlay -->
+    <div id="pw-overlay">
+      <div class="pw-box">
+        <h2>🔒 Smart Class IoT</h2>
+        <p>Masukkan peran dan password untuk akses dashboard</p>
+        <select id="u-input">
+          <option value="" disabled selected>Pilih Peran Login...</option>
+          <option value="admin">👑 Admin</option>
+          <option value="guru">👨‍🏫 Guru</option>
+          <option value="siswa">🎓 Siswa</option>
+        </select>
+        <div class="pw-input-wrap">
+          <input id="pw-input" type="password" placeholder="Masukkan password..."
+            onkeydown="if(event.key==='Enter')checkLogin()">
+          <button class="pw-toggle" onclick="togglePassword()" title="Lihat/Sembunyikan password">👁️</button>
+        </div>
+        <button onclick="checkLogin()">🔓 Masuk Dashboard</button>
+        <div class="pw-err" id="pw-err">❌ Username/Password salah!</div>
+        <div style="margin-top:12px;font-size:0.75em;color:#64748b">
+          <small>💡 Petunjuk: Pilih peran lalu masukkan password yang sesuai</small>
+        </div>
+      </div>
+    </div>
+
+
+    <h1>🏫 Smart Class IoT Dashboard<small>Real-time Monitoring • Data dari ESP32</small></h1>
+
+    <div class="status-bar">
+      <div><span class="status-dot dot-yellow" id="conn-dot"></span><span id="conn-text">Connecting...</span></div>
+      <div id="record-count">Records: --</div>
+      <div id="last-update">--</div>
+    </div>
+
+    <!-- Auto Mode Card -->
+    <div class="card" id="mode-card">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <h2 style="border:none;margin:0;padding:0;font-size:1.2em">🤖 Status Kelas Otomatis</h2>
+          <div id="class-desc" style="color:#94a3b8;font-size:0.9em;margin-top:6px">Mendeteksi aktivitas...</div>
+        </div>
+        <div style="text-align:right">
+          <div id="class-icon" style="font-size:2.8em">⏳</div>
+        </div>
+      </div>
+      <div id="class-mode" style="font-size:1.6em;font-weight:bold;color:#facc15;margin-top:12px">Menunggu Data...</div>
+    </div>
+
+    <!-- Sensor Cards -->
+    <div class="card">
+      <h2>📊 Sensor Real-time</h2>
+      <div id="no-data-msg" class="no-data">⏳ Menunggu data dari ESP32...</div>
+      <div class="sensor-grid" id="sensor-grid" style="display:none">
+        <div class="sb" id="box-t">
+          <div class="value" id="v-t">--</div>
+          <div class="label">🌡️ Suhu (°C)</div>
+        </div>
+        <div class="sb" id="box-h">
+          <div class="value" id="v-h">--</div>
+          <div class="label">💧 Kelembaban (%)</div>
+        </div>
+        <div class="sb" id="box-d">
+          <div class="value" id="v-d">--</div>
+          <div class="label">📏 Jarak (cm)</div>
+        </div>
+        <div class="sb" id="box-l">
+          <div class="value" id="v-l">--</div>
+          <div class="label">☀️ Cahaya (LDR)</div>
+        </div>
+        <div class="sb" id="box-g">
+          <div class="value" id="v-g">--</div>
+          <div class="label">💨 Gas MQ2</div>
+          <div class="do-status" id="do-g">DO: --</div>
+        </div>
+        <div class="sb" id="box-f">
+          <div class="value" id="v-f">--</div>
+          <div class="label">🔥 Api (Flame)</div>
+          <div class="do-status" id="do-f">DO: --</div>
+        </div>
+        <div class="sb" id="box-sa">
+          <div class="value" id="v-sa">--</div>
+          <div class="label">🎵 Suara AO (dB Est.)</div>
+        </div>
+        <div class="sb" id="box-p">
+          <div class="value" id="v-p">--</div>
+          <div class="label">🏃 Gerak (Total)</div>
+        </div>
+        <!-- <div class="sb" id="box-s">
+          <div class="value" id="v-s">--</div>
+          <div class="label">🔊 Suara DO (Digital)</div>
+        </div> -->
+      </div>
+      <div id="timestamp">Belum ada data</div>
+    </div>
+
+    <!-- DO Polarity -->
+    <div class="card">
+      <h2>🔬 Auto-Detect DO Polarity</h2>
+      <p style="color:#94a3b8;font-size:0.8em;margin-bottom:10px">Sistem auto-detect apakah 0=aman atau 0=bahaya per
+        sensor saat kalibrasi</p>
+      <div class="pol-grid">
+        <div class="pol-item">
+          <div class="name">MQ2 Gas</div><span class="pol-badge" id="pol-mq2">?</span>
+        </div>
+        <div class="pol-item">
+          <div class="name">Flame</div><span class="pol-badge" id="pol-flame">?</span>
+        </div>
+        <div class="pol-item">
+          <div class="name">Sound</div><span class="pol-badge" id="pol-sound">?</span>
+        </div>
+        <div class="pol-item">
+          <div class="name">LDR</div><span class="pol-badge" id="pol-ldr">?</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Music Player (Guru + Admin) -->
+    <div class="card ctrl-guru">
+      <h2>🎵 Buzzer & Music Player (25 Lagu)</h2>
+      <div class="music-grid">
+        <button class="mbtn m0" onclick="sendCmd('PLAY:0')">⏹ Stop</button>
+        <button class="mbtn m1" onclick="sendCmd('PLAY:1')">🎵 Startup</button>
+        <button class="mbtn m2" onclick="sendCmd('PLAY:2')">🚨 Alarm</button>
+        <button class="mbtn m3" onclick="sendCmd('PLAY:3')">🔔 Bell</button>
+        <button class="mbtn m4" onclick="sendCmd('PLAY:4')">📱 Nokia</button>
+        <button class="mbtn m5" onclick="sendCmd('PLAY:5')">🎂 Birthday</button>
+        <button class="mbtn m6" onclick="sendCmd('PLAY:6')">🍄 Mario</button>
+        <button class="mbtn m7" onclick="sendCmd('PLAY:7')">⭐ Twinkle</button>
+        <button class="mbtn m8" onclick="sendCmd('PLAY:8')">🔊 BuzzerON</button>
+        <button class="mbtn m9" onclick="sendCmd('PLAY:9')">🔇 BuzzerOFF</button>
+        <button class="mbtn m1" onclick="sendCmd('PLAY:10')">🎼 Für Elise</button>
+        <button class="mbtn m3" onclick="sendCmd('PLAY:11')">🎶 Ode to Joy</button>
+        <button class="mbtn m5" onclick="sendCmd('PLAY:12')">🎄 Jingle Bells</button>
+        <button class="mbtn m5" onclick="sendCmd('PLAY:13')">🎅 Merry Xmas</button>
+        <button class="mbtn m6" onclick="sendCmd('PLAY:14')">⚔️ Star Wars</button>
+        <button class="mbtn m6" onclick="sendCmd('PLAY:15')">🧱 Tetris</button>
+        <button class="mbtn m6" onclick="sendCmd('PLAY:16')">👾 Pacman</button>
+        <button class="mbtn m1" onclick="sendCmd('PLAY:17')">🎹 Do Re Mi</button>
+        <button class="mbtn m7" onclick="sendCmd('PLAY:18')">🌉 London Bridge</button>
+        <button class="mbtn m7" onclick="sendCmd('PLAY:19')">🐑 Mary Lamb</button>
+        <button class="mbtn m3" onclick="sendCmd('PLAY:20')">🏫 Bel Masuk</button>
+        <button class="mbtn m4" onclick="sendCmd('PLAY:21')">☕ Bel Istirahat</button>
+        <button class="mbtn m3" onclick="sendCmd('PLAY:22')">🏠 Bel Pulang</button>
+        <button class="mbtn m2" onclick="sendCmd('PLAY:23')">🚨 Siren</button>
+        <button class="mbtn m1" onclick="sendCmd('PLAY:24')">🇮🇩 Ind. Raya</button>
+      </div>
+    </div>
+
+    <!-- People Counter -->
+    <div class="card">
+      <h2>👥 People Counter (PIR)</h2>
+      <div class="sensor-grid">
+        <div class="sensor-box">
+          <div class="value" id="pcount">--</div>
+          <div class="label">👤 Motion Events</div>
+        </div>
+        <div class="sensor-box">
+          <div class="value" id="pest">--</div>
+          <div class="label">🏫 Est. Orang (~events/2)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Referensi Standar -->
+    <div class="card">
+      <h2>📚 Referensi Standar Kenyamanan Ruangan</h2>
+      <p style="color:#94a3b8;font-size:0.8em;margin-bottom:12px">Pembanding otomatis data real-time vs standar WHO,
+        Kemenkes, SNI</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85em;color:#e2e8f0">
+          <thead>
+            <tr style="background:#1e293b;text-align:left">
+              <th style="padding:8px;border:1px solid #334155">Parameter</th>
+              <th style="padding:8px;border:1px solid #334155">Satuan</th>
+              <th style="padding:8px;border:1px solid #334155">Min</th>
+              <th style="padding:8px;border:1px solid #334155">Max</th>
+              <th style="padding:8px;border:1px solid #334155">Referensi</th>
+              <th style="padding:8px;border:1px solid #334155">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">🌡️ Suhu</td>
+              <td style="padding:8px;border:1px solid #334155">°C</td>
+              <td style="padding:8px;border:1px solid #334155">23</td>
+              <td style="padding:8px;border:1px solid #334155">26</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">SNI 03-6572-2001, Kemenkes No.1077/2011
+              </td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-t">⏳</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">💧 Kelembaban</td>
+              <td style="padding:8px;border:1px solid #334155">%RH</td>
+              <td style="padding:8px;border:1px solid #334155">40</td>
+              <td style="padding:8px;border:1px solid #334155">60</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">WHO Indoor AQ, Kemenkes No.1077/2011
+              </td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-h">⏳</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">💨 Gas (MQ2)</td>
+              <td style="padding:8px;border:1px solid #334155">ADC (0-4095)</td>
+              <td style="padding:8px;border:1px solid #334155">0</td>
+              <td style="padding:8px;border:1px solid #334155">800</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">SNI 19-0232-2005, WHO AQG 2021</td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-g">⏳</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">💡 Cahaya (LDR)</td>
+              <td style="padding:8px;border:1px solid #334155">ADC (lux eq.)</td>
+              <td style="padding:8px;border:1px solid #334155">250</td>
+              <td style="padding:8px;border:1px solid #334155">500</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">SNI 03-6197-2000</td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-l">⏳</td>
+            </tr>
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">🔊 Kebisingan (AO)</td>
+              <td style="padding:8px;border:1px solid #334155">ADC (0-4095)</td>
+              <td style="padding:8px;border:1px solid #334155">0</td>
+              <td style="padding:8px;border:1px solid #334155">1000</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">Kemenkes No.48/1999 (Est.)</td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-sa">⏳</td>
+            </tr>
+            <tr>
+              <!-- <tr>
+              <td style="padding:8px;border:1px solid #334155">🔊 Kebisingan (DO)</td>
+              <td style="padding:8px;border:1px solid #334155">Digital</td>
+              <td style="padding:8px;border:1px solid #334155">0</td>
+              <td style="padding:8px;border:1px solid #334155">0 (Normal)</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">Safety</td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-s">⏳</td>
+            </tr> -->
+            <tr>
+              <td style="padding:8px;border:1px solid #334155">🔥 Api</td>
+              <td style="padding:8px;border:1px solid #334155">Digital</td>
+              <td style="padding:8px;border:1px solid #334155">-</td>
+              <td style="padding:8px;border:1px solid #334155">0 (No Fire)</td>
+              <td style="padding:8px;border:1px solid #334155;font-size:0.75em">NFPA / OSI Safety</td>
+              <td style="padding:8px;border:1px solid #334155" id="ref-f">⏳</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="color:#64748b;font-size:0.7em;margin-top:8px">📖 Sumber: WHO Indoor Air Quality Guidelines (2021),
+        Permenkes No.1077/Menkes/Per/V/2011, SNI 03-6572-2001, SNI 03-6197-2000, SNI 19-0232-2005, NFPA 72, OSHA
+        Standards</p>
+    </div>
+
+    <!-- Piano (Guru + Admin) -->
+    <div class="card ctrl-guru">
+      <h2>🎹 Piano Virtual</h2>
+      <p style="color:#94a3b8;font-size:0.8em;margin-bottom:12px">Ketuk tombol untuk memainkan nada di buzzer ESP32</p>
+      <div class="piano-wrap">
+        <div class="piano">
+          <div class="white-key" onclick="playNote(262)"><span>C4</span></div>
+          <div class="black-key" style="left:28px" onclick="playNote(277)"><span>C#</span></div>
+          <div class="white-key" onclick="playNote(294)"><span>D4</span></div>
+          <div class="black-key" style="left:72px" onclick="playNote(311)"><span>D#</span></div>
+          <div class="white-key" onclick="playNote(330)"><span>E4</span></div>
+          <div class="white-key" onclick="playNote(349)"><span>F4</span></div>
+          <div class="black-key" style="left:159px" onclick="playNote(370)"><span>F#</span></div>
+          <div class="white-key" onclick="playNote(392)"><span>G4</span></div>
+          <div class="black-key" style="left:203px" onclick="playNote(415)"><span>G#</span></div>
+          <div class="white-key" onclick="playNote(440)"><span>A4</span></div>
+          <div class="black-key" style="left:247px" onclick="playNote(466)"><span>A#</span></div>
+          <div class="white-key" onclick="playNote(494)"><span>B4</span></div>
+          <div class="white-key" onclick="playNote(523)"><span>C5</span></div>
+          <div class="black-key" style="left:335px" onclick="playNote(554)"><span>C#</span></div>
+          <div class="white-key" onclick="playNote(587)"><span>D5</span></div>
+          <div class="black-key" style="left:379px" onclick="playNote(622)"><span>D#</span></div>
+          <div class="white-key" onclick="playNote(659)"><span>E5</span></div>
+          <div class="white-key" onclick="playNote(698)"><span>F5</span></div>
+          <div class="black-key" style="left:466px" onclick="playNote(740)"><span>F#</span></div>
+          <div class="white-key" onclick="playNote(784)"><span>G5</span></div>
+          <div class="black-key" style="left:510px" onclick="playNote(831)"><span>G#</span></div>
+          <div class="white-key" onclick="playNote(880)"><span>A5</span></div>
+          <div class="black-key" style="left:554px" onclick="playNote(932)"><span>A#</span></div>
+          <div class="white-key" onclick="playNote(988)"><span>B5</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Command & Controls (Admin only) -->
+    <div class="card ctrl-admin">
+      <h2>🎮 Command Control</h2>
+      <div class="cmd-row">
+        <input type="text" id="cmd-input" placeholder="Ketik command (cth: PLAY:1, CALIBRATE)">
+        <button onclick="sendManualCmd()">Kirim</button>
+      </div>
+      <div class="ctrl-grid">
+        <button class="cbtn cal" onclick="sendCmd('CALIBRATE')">🔧 Kalibrasi Sensor</button>
+        <button class="cbtn thr" onclick="setThreshold()">📊 Set Threshold MQ2</button>
+        <button class="cbtn" style="background:#0ea5e9" onclick="setIntervalLog()">⏱ Set Interval Log</button>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card">
+      <h2>📈 Grafik Sensor (20 data terakhir)</h2>
+      <div class="chart-box"><canvas id="chart"></canvas></div>
+    </div>
+
+    <!-- Device Info -->
+    <div class="card">
+      <h2>📡 Device Info</h2>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="iv" id="i-rssi">--</div>
+          <div class="il">📶 WiFi (dBm)</div>
+        </div>
+        <div class="info-item">
+          <div class="iv" id="i-uptime">--</div>
+          <div class="il">⏱️ Uptime</div>
+        </div>
+        <div class="info-item">
+          <div class="iv" id="i-device">--</div>
+          <div class="il">🏷️ Device</div>
+        </div>
+        <div class="info-item">
+          <div class="iv" id="i-records">--</div>
+          <div class="il">📝 Total Records</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Log -->
+    <div class="card">
+      <h2>📋 Activity Log</h2>
+      <div class="log" id="log">[System] Dashboard loaded...</div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="refreshAll()">🔄 Refresh</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // GAS URL - fixed value (no template tags to avoid browser syntax error)
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbyxg3Ol1pkk9Kcr7HYjy0NzBE7fjs36QFGMsrN6K3BXyohw9gX6nuys2aXOc5njZOB2/exec';
+    let chart = null;
+
+    function lg(m) {
+      const el = document.getElementById('log');
+      el.innerHTML = '[' + new Date().toLocaleTimeString() + '] ' + m + '\n' + el.innerHTML;
+    }
+
+    function polLabel(v) {
+      if (v == 0) return '<span class="pol-badge pol-al">0=Bahaya (Active Low)</span>';
+      if (v == 1) return '<span class="pol-badge pol-ah">1=Bahaya (Active High)</span>';
+      return '<span class="pol-badge" style="background:#475569;color:#94a3b8">Belum dikalibrasi</span>';
+    }
+
+    function isDanger(raw, pol) {
+      if (pol == 0) return raw == 0; // active low: 0 = bahaya
+      if (pol == 1) return raw == 1; // active high: 1 = bahaya
+      return raw == 0; // default
+    }
+
+    function playBeep() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.type = 'square';
+        osc.frequency.value = 880; // Nada A5
+        gain.gain.value = 0.1;     // Volume 10%
+        osc.start();
+        setTimeout(() => { osc.stop(); ctx.close(); }, 300); // Durasi 300ms
+      } catch(e) { console.error(e); }
+    }
+
+    // Unit Conversions (Approximations)
+    function adcToLux(raw) { return Math.round((raw / 4095) * 1000); }
+    function adcToDb(raw) { return Math.round(30 + (raw / 4095) * 70); }
+    function adcToPpm(raw) { return Math.round((raw / 4095) * 2000); }
+
+    function fmtUptime(s) {
+      if (!s && s !== 0) return '--';
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      return h + 'j ' + m + 'm';
+    }
+
+    async function fetchStatus() {
+      try {
+        const r = await fetch(GAS_URL + '?action=getStatus');
+        const j = await r.json();
+        if (j.status !== 'success' || !j.data) {
+          document.getElementById('no-data-msg').style.display = 'block';
+          document.getElementById('sensor-grid').style.display = 'none';
+          document.getElementById('conn-dot').className = 'status-dot dot-red';
+          document.getElementById('conn-text').textContent = 'No data';
+          lg('⚠️ Tidak ada data dari ESP32');
+          return;
+        }
+
+        const d = j.data;
+        document.getElementById('no-data-msg').style.display = 'none';
+        document.getElementById('sensor-grid').style.display = 'grid';
+        document.getElementById('conn-dot').className = 'status-dot dot-green';
+        document.getElementById('conn-text').textContent = 'Connected';
+
+        // Sensor values
+        document.getElementById('v-t').textContent = d.temperature + '°C';
+        document.getElementById('v-h').textContent = d.humidity + '%';
+        // Helper vars
+        const lux = adcToLux(d.ldr);
+        const ppm = adcToPpm(d.mq2);
+        const db = adcToDb(d.soundAO || 0);
+
+        document.getElementById('v-t').textContent = d.temperature + ' °C';
+        document.getElementById('v-h').textContent = d.humidity + ' %';
+        document.getElementById('v-d').textContent = d.distance + ' cm';
+        document.getElementById('v-l').textContent = lux + ' Lux';
+        document.getElementById('v-g').textContent = ppm + ' ppm';
+        document.getElementById('v-sa').textContent = db + ' dB';
+        document.getElementById('v-p').textContent = d.peopleCount || 0;
+
+        // Update Auto Mode
+        updateClassMode(db);
+
+        // Sound AO Alert (> 80dB warn)
+        document.getElementById('box-sa').className = 'sb' + (db > 80 ? ' warn' : '');
+
+        // Gas alert (> 400ppm warn)
+        const gasHigh = isDanger(d.mq2do, d.pol_mq2);
+        if (gasHigh) playBeep();
+        document.getElementById('box-g').className = 'sb' + (ppm > 400 ? ' warn' : '');
+        document.getElementById('do-g').textContent = 'DO: ' + d.mq2do;
+        document.getElementById('do-g').className = 'do-status ' + (gasHigh ? 'danger' : 'safe');
+
+        // Flame - use polarity
+        const flameDanger = isDanger(d.flame, d.pol_flame);
+        document.getElementById('v-f').textContent = flameDanger ? '⚠️ TERDETEKSI!' : '✅ Aman';
+        document.getElementById('box-f').className = 'sb' + (flameDanger ? ' alert' : '');
+        document.getElementById('do-f').textContent = 'Raw: ' + d.flame;
+        document.getElementById('do-f').className = 'do-status ' + (flameDanger ? 'danger' : 'safe');
+
+        // Polarity
+        document.getElementById('pol-mq2').innerHTML = polLabel(d.pol_mq2);
+        document.getElementById('pol-flame').innerHTML = polLabel(d.pol_flame);
+
+        // Device info
+        document.getElementById('i-rssi').textContent = d.rssi || '--';
+        document.getElementById('i-uptime').textContent = fmtUptime(d.uptime);
+        document.getElementById('i-device').textContent = d.device || '--';
+
+        // Timestamp
+        const ts = d.timestamp ? new Date(d.timestamp).toLocaleString() : '--';
+        document.getElementById('timestamp').textContent = 'Data terakhir: ' + ts;
+        document.getElementById('last-update').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+
+        // People counter
+        /* if (d.peopleCount !== undefined) {
+          document.getElementById('pcount').textContent = d.peopleCount;
+          document.getElementById('pest').textContent = '~' + Math.ceil(d.peopleCount / 2);
+        } */
+
+        // Reference table auto-compare
+        updateRef('ref-t', d.temperature, 23, 26);
+        updateRef('ref-h', d.humidity, 40, 60);
+        updateRef('ref-g', ppm, 0, 400);
+        updateRef('ref-l', lux, 300, 1000);
+        updateRef('ref-sa', db, 30, 85);
+        // updateRefDigital('ref-s', d.sound, 0);
+        updateRefDigital('ref-f', d.flame, 0);
+
+        lg('✅ Data sensor updated');
+      } catch (e) {
+        lg('❌ Error: ' + e.message);
+        document.getElementById('conn-dot').className = 'status-dot dot-red';
+        document.getElementById('conn-text').textContent = 'Error';
+      }
+    }
+
+    // Reference table helpers
+    function updateRef(id, val, min, max) {
+      const el = document.getElementById(id);
+      if (!el || val === undefined) return;
+      if (val >= min && val <= max) {
+        el.innerHTML = '<span class="ref-ok">✅ ' + val + ' (Aman)</span>';
+      } else if (val < min * 0.8 || val > max * 1.3) {
+        el.innerHTML = '<span class="ref-danger">🔴 ' + val + ' (Bahaya)</span>';
+      } else {
+        el.innerHTML = '<span class="ref-warn">⚠️ ' + val + ' (Warning)</span>';
+      }
+    }
+    function updateRefDigital(id, val, safe) {
+      const el = document.getElementById(id);
+      if (!el || val === undefined) return;
+      if (val == safe) {
+        el.innerHTML = '<span class="ref-ok">✅ Normal</span>';
+      } else {
+        el.innerHTML = '<span class="ref-danger">🔴 Bahaya!</span>';
+      }
+    }
+
+    async function fetchLatest() {
+      try {
+        const r = await fetch(GAS_URL + '?action=getLatest');
+        const j = await r.json();
+        if (j.status === 'success' && j.data) {
+          document.getElementById('i-records').textContent = j.data.totalRecords || '--';
+          document.getElementById('record-count').textContent = 'Records: ' + (j.data.totalRecords || '--');
+          if (j.data.Pol_Flame !== undefined) {
+            document.getElementById('pol-flame').innerHTML = polLabel(j.data.Pol_Flame);
+          }
+        }
+      } catch (e) { /* silent */ }
+    }
+
+    async function fetchHistory() {
+      try {
+        const r = await fetch(GAS_URL + '?action=getHistory&limit=50');
+        const j = await r.json();
+        if (j.status !== 'success' || !j.data || j.data.length === 0) return;
+
+        const last20 = j.data.slice(-20);
+        const labels = last20.map(d => {
+          try { return new Date(d.timestamp).toLocaleTimeString(); } catch (e) { return '?'; }
+        });
+
+        const ctx = document.getElementById('chart').getContext('2d');
+        if (chart) chart.destroy();
+
+        chart = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'Suhu (°C)', data: last20.map(d => d.temperature), borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.1)', fill: true, tension: 0.3 },
+              { label: 'Kelembaban (%)', data: last20.map(d => d.humidity), borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', fill: true, tension: 0.3 },
+              { label: 'Gas (ppm)', data: last20.map(d => adcToPpm(d.mq2)), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', fill: true, tension: 0.3 },
+              { label: 'Cahaya (Lux)', data: last20.map(d => adcToLux(d.ldr)), borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.1)', fill: true, tension: 0.3 },
+              { label: 'Suara (dB)', data: last20.map(d => adcToDb(d.soundAO || 0)), borderColor: '#8b5cf6', backgroundColor: 'rgba(139,92,246,0.1)', fill: true, tension: 0.3 },
+              { label: 'Gerak (Count)', data: last20.map(d => d.peopleCount || 0), borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3, hidden: true }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { labels: { color: '#94a3b8', font: { size: 11 } } } },
+            scales: {
+              x: { ticks: { color: '#64748b', font: { size: 9 } }, grid: { color: '#1e293b' } },
+              y: { beginAtZero: true, ticks: { color: '#64748b' }, grid: { color: '#1e293b' } }
+            }
+          }
+        });
+        lg('📈 Chart updated (' + last20.length + ' data points)');
+      } catch (e) {
+        lg('Chart error: ' + e.message);
+      }
+    }
+
+    // ========== ROLE-BASED ACCESS ==========
+    // Passwords sesuai kelas_config.json
+    const ROLES = {
+      admin: { pw: 'admin123', level: 3, label: '👑 Admin', color: '#ef4444' },
+      guru: { pw: 'guru123', level: 2, label: '👨‍🏫 Guru', color: '#f59e0b' },
+      siswa: { pw: 'siswa123', level: 1, label: '🎓 Siswa', color: '#3b82f6' }
+    };
+
+    let currentRole = sessionStorage.getItem('sc_role') || null;
+    let isUnlocked = currentRole !== null;
+
+    // ========== ADMIN LOGIN ==========
+    let isLoggedIn = sessionStorage.getItem('sc_login') === 'true';
+
+    // Toggle password visibility
+    function togglePassword() {
+      const pwInput = document.getElementById('pw-input');
+      const toggleBtn = document.querySelector('.pw-toggle');
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+      } else {
+        pwInput.type = 'password';
+        toggleBtn.textContent = '👁️';
+      }
+    }
+
+    function checkLogin() {
+      const uInput = document.getElementById('u-input');
+      const pInput = document.getElementById('pw-input');
+      const errDiv = document.getElementById('pw-err');
+      
+      // Username case insensitive, password case sensitive (sesuai config)
+      const u = uInput.value.trim().toLowerCase();
+      const p = pInput.value.trim(); // Password tetap case sensitive
+      
+      // Validasi input
+      if (!u) {
+        errDiv.style.display = 'block';
+        errDiv.textContent = '⚠️ Pilih peran login terlebih dahulu!';
+        setTimeout(() => errDiv.style.display = 'none', 3000);
+        return;
+      }
+      
+      if (!p) {
+        errDiv.style.display = 'block';
+        errDiv.textContent = '⚠️ Password tidak boleh kosong!';
+        setTimeout(() => errDiv.style.display = 'none', 3000);
+        pInput.focus();
+        return;
+      }
+
+      // Cek role dan password
+      let role = null;
+      if (u === 'admin' && p === ROLES.admin.pw) role = 'admin';
+      else if (u === 'guru' && p === ROLES.guru.pw) role = 'guru';
+      else if (u === 'siswa' && p === ROLES.siswa.pw) role = 'siswa';
+
+      if (role) {
+        sessionStorage.setItem('sc_role', role);
+        sessionStorage.setItem('sc_login', 'true');
+        isLoggedIn = true;
+        isUnlocked = true;
+        currentRole = role;
+        
+        document.getElementById('pw-overlay').classList.add('hidden');
+        applyRole(role);
+        lg('🔓 Login Berhasil sebagai ' + ROLES[role].label);
+        
+        // Clear inputs
+        uInput.value = '';
+        pInput.value = '';
+        
+        // Reset password visibility
+        document.getElementById('pw-input').type = 'password';
+        document.querySelector('.pw-toggle').textContent = '👁️';
+      } else {
+        errDiv.style.display = 'block';
+        errDiv.innerHTML = '❌ <b>Login Gagal!</b><br>Password salah untuk peran ' + u.toUpperCase();
+        setTimeout(() => errDiv.style.display = 'none', 3000);
+        pInput.value = '';
+        pInput.focus();
+      }
+    }
+
+
+    // On load check
+    if (isLoggedIn) {
+      document.getElementById('pw-overlay').classList.add('hidden');
+      document.querySelectorAll('.ctrl-admin').forEach(e => e.style.display = '');
+      document.querySelectorAll('.ctrl-guru').forEach(e => e.style.display = '');
+    }
+
+    function applyRole(role) {
+      const level = ROLES[role].level;
+      // Show role badge
+      let badge = document.getElementById('role-badge');
+      if (!badge) {
+        badge = document.createElement('div');
+        badge.id = 'role-badge';
+        badge.style.cssText = 'position:fixed;top:10px;right:10px;z-index:999;padding:6px 14px;border-radius:20px;font-size:0.85em;font-weight:bold;cursor:pointer;';
+        badge.onclick = () => { sessionStorage.removeItem('sc_role'); location.reload(); };
+        document.body.appendChild(badge);
+      }
+      badge.textContent = ROLES[role].label + ' ✖';
+      badge.style.background = ROLES[role].color;
+      badge.style.color = 'white';
+
+      // Admin (3): semua
+      // Guru (2): musik, bel, piano (no kalibrasi, no manual cmd, no threshold)
+      // Siswa (1): lihat data saja
+      document.querySelectorAll('.ctrl-admin').forEach(el => el.style.display = level >= 3 ? '' : 'none');
+      document.querySelectorAll('.ctrl-guru').forEach(el => el.style.display = level >= 2 ? '' : 'none');
+    }
+
+    // On load: check if already logged in
+    if (isUnlocked && currentRole) {
+      document.getElementById('pw-overlay').classList.add('hidden');
+      applyRole(currentRole);
+    }
+
+    function updateClassMode(db) {
+      const now = new Date();
+      const day = now.getDay(); // 0=Sun, 5=Fri
+      const h = now.getHours();
+      const m = now.getMinutes();
+      const t = h * 60 + m;
+
+      // Schedule: 07:00-10:15, 10:30-12:00, 12:30-15:00 (Fri 16:00)
+      let isLesson = false;
+      if (t >= 420 && t < 615) isLesson = true;
+      else if (t >= 630 && t < 720) isLesson = true;
+      else if (t >= 750) {
+        if (day === 5 && t < 960) isLesson = true; // Jumat sampai 16:00
+        else if (day !== 5 && t < 900) isLesson = true; // Lainnya sampai 15:00
+      }
+
+      let modeText = "Mode Santai";
+      let modeIcon = "☕";
+      let modeColor = "#10b981"; // green
+      let modeDesc = "Diluar jam pelajaran sekolah";
+
+      if (isLesson) {
+        if (db < 55) {
+          modeText = "Mode Belajar";
+          modeIcon = "📖";
+          modeColor = "#3b82f6"; // blue
+          modeDesc = "Suasana hening, kondusif untuk belajar";
+        } else if (db >= 55 && db < 75) {
+          modeText = "Guru Menjelaskan";
+          modeIcon = "🗣️";
+          modeColor = "#f59e0b"; // yellow
+          modeDesc = "Terdeteksi aktivitas penjelasan guru";
+        } else {
+          modeText = "Mode Istirahat / Ramai";
+          modeIcon = "🔔";
+          modeColor = "#ef4444"; // red
+          modeDesc = "Kelas terlalu bising!";
+        }
+      } else if ((t >= 615 && t < 630) || (t >= 720 && t < 750)) {
+        modeText = "Jam Istirahat";
+        modeIcon = "🥪";
+        modeColor = "#8b5cf6"; // purple
+        modeDesc = "Waktunya istirahat siswa";
+      }
+
+      document.getElementById('class-mode').textContent = modeText;
+      document.getElementById('class-mode').style.color = modeColor;
+      document.getElementById('class-icon').textContent = modeIcon;
+      document.getElementById('class-desc').textContent = modeDesc;
+    }
+
+// Auto-detect ESP32 IP from current location or use stored
+let ESP32_IP = window.location.hostname || '192.168.1.100';
+if (ESP32_IP === 'script.google.com' || ESP32_IP === '') {
+  // Try to get from localStorage or default
+  ESP32_IP = localStorage.getItem('esp32_ip') || '192.168.1.100';
+}
+
+function getLocalUrl(path) {
+  return 'http://' + ESP32_IP + ':80' + path;
+}
+
+async function sendToESP32(cmd) {
+  const url = getLocalUrl('/api/command?cmd=' + encodeURIComponent(cmd));
+  try {
+    const response = await fetch(url, { 
+      method: 'GET',
+      timeout: 3000 
+    });
+    if (response.ok) {
+      lg('📤 ESP32: ' + cmd);
+      return true;
+    }
+  } catch(e) {
+    console.log('ESP32 local not reachable:', e.message);
+  }
+  return false;
+}
+
+async function sendCmd(cmd) {
+      if (!isUnlocked) {
+        alert('🔒 Login dulu!');
+        document.getElementById('pw-overlay').classList.remove('hidden');
+        return;
+      }
+      // Siswa ga bisa kirim command
+      if (currentRole === 'siswa') {
+        alert('🎓 Siswa hanya bisa melihat data sensor!');
+        return;
+      }
+      // Guru ga bisa kalibrasi/threshold/manual
+      if (currentRole === 'guru' && (cmd.startsWith('CAL') || cmd.startsWith('THRESHOLD') || cmd.startsWith('OTA'))) {
+        alert('👨‍🏫 Guru tidak bisa akses fitur ini!');
+        return;
+      }
+      
+      // Always try local ESP32 first (instant response)
+      const localSuccess = await sendToESP32(cmd);
+      if (localSuccess) {
+        lg('✅ Playing on ESP32: ' + cmd);
+        return;
+      }
+      
+      // Fallback to GAS cloud (slower - 5s delay)
+      lg('📤 Trying Cloud (slower): ' + cmd);
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setCommand', command: cmd, device: 'ESP32_1' })
+        });
+        lg('✅ Command queued to cloud');
+      } catch (e) {
+        lg('❌ Error: ' + e.message);
+      }
+    }
+
+    async function playNote(freq) {
+      // Piano needs instant response - use local only
+      const localSuccess = await sendToESP32('NOTE:' + freq + ':150');
+      if (localSuccess) {
+        lg('🎹 Piano: ' + freq + 'Hz (direct)');
+      } else {
+        // Fallback to cloud
+        lg('🎹 Piano: ' + freq + 'Hz (cloud - slower)');
+        await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setCommand', command: 'NOTE:' + freq + ':150', device: 'ESP32_1' })
+        });
+      }
+    }
+
+    function sendManualCmd() {
+      const input = document.getElementById('cmd-input');
+      if (!input.value) { alert('Ketik command dulu!'); return; }
+      sendCmd(input.value);
+      input.value = '';
+    }
+
+    function setThreshold() {
+      const val = prompt('Set MQ2 Threshold (default: 800):', '800');
+      if (val && !isNaN(val)) {
+        sendCmd('THRESHOLD:' + val);
+        lg('📊 Threshold set: ' + val);
+      }
+    }
+
+    function setIntervalLog() {
+      const val = prompt('Set Interval Kirim Data (menit):', '1');
+      if (val && !isNaN(val) && val > 0) {
+        sendCmd('INTERVAL:' + val);
+        lg('⏱ Interval set: ' + val + ' menit');
+      }
+    }
+
+    async function refreshAll() {
+      lg('🔄 Refreshing all data...');
+      await Promise.all([fetchStatus(), fetchLatest(), fetchHistory()]);
+    }
+
+    // Init
+    setInterval(refreshAll, 15000);
+    refreshAll();
+  </script>
+</body>
+
+</html>
