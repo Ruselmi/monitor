@@ -8,9 +8,9 @@
     <meta name="description" content="Monitoring Harga Komoditas Indonesia">
     <title>🌾 Taniku Monitor</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" onerror="this.onerror=null; this.href='data:text/css;base64,';" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="window.chartJsError=true;"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="window.leafletError=true;"></script>
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="animate.css">
@@ -74,6 +74,9 @@
                 </div>
                 <div class="chart-container">
                     <canvas id="priceChart"></canvas>
+                    <div id="chartErrorMsg" class="hidden" style="text-align:center; padding: 20px; color: #ef4444;">
+                        ⚠️ Grafik tidak tersedia (Offline Mode)
+                    </div>
                 </div>
             </div>
 
@@ -180,6 +183,9 @@
             </div>
 
             <div id="indonesiaMap" class="map-container"></div>
+            <div id="mapErrorMsg" class="hidden" style="text-align:center; padding: 20px; color: #ef4444; background: #1f2937; border-radius: 12px; margin-bottom: 12px;">
+                ⚠️ Peta tidak tersedia (Offline Mode)
+            </div>
 
             <div class="map-legend">
                 <div class="legend-row"><span class="legend-dot green"></span><span>Murah</span></div>
@@ -357,6 +363,7 @@
                 <button class="topic-btn" data-topic="tanam">🌾 Cara Tanam</button>
                 <button class="topic-btn" data-topic="harga">💰 Harga</button>
                 <button class="topic-btn" data-topic="cuaca">🌤️ Cuaca</button>
+                <button class="topic-btn" data-topic="perintah">💻 Perintah</button>
             </div>
 
             <!-- Chat Level -->
@@ -378,6 +385,7 @@
                             <li>🐛 Penanganan hama</li>
                             <li>🧪 Pupuk & rabuk</li>
                             <li>💰 Harga pasar</li>
+                            <li>💻 Perintah /status, /sensors, dll.</li>
                         </ul>
                     </div>
                 </div>
@@ -389,11 +397,12 @@
                 <button class="quick-btn" data-q="Harga beras hari ini">💰 Harga beras</button>
                 <button class="quick-btn" data-q="Pupuk untuk cabai">🧪 Pupuk cabai</button>
                 <button class="quick-btn" data-q="Hama wereng">🐛 Hama wereng</button>
+                <button class="quick-btn" data-q="/status">📊 Status Sistem</button>
             </div>
 
             <!-- Chat Input -->
             <div class="chat-input-bar">
-                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik pertanyaan...">
+                <input type="text" id="chatInput" class="chat-input" placeholder="Ketik pertanyaan atau perintah...">
                 <button id="sendChatBtn" class="chat-send-btn">📤</button>
             </div>
         </section>
@@ -451,7 +460,7 @@
             </div>
         </section>
 
-        <!-- ========== TAB 6: SETTINGS ========== -->
+        <!-- ========== TAB 7: SETTINGS ========== -->
         <section id="tabSettings" class="tab-content">
             <header class="tab-header">
                 <h2 class="tab-title">⚙️ Pengaturan</h2>
@@ -671,6 +680,9 @@
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <span class="loading-text">Memuat...</span>
+            <button id="forceEnterBtn" class="btn-primary" style="margin-top: 20px; font-size: 0.8rem; padding: 8px 16px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); display: none;" onclick="document.getElementById('loadingOverlay').classList.add('hidden');">
+                🛠️ Mode Perbaikan (Masuk Paksa)
+            </button>
         </div>
     </div>
 
@@ -680,6 +692,13 @@
     <script src="data.js"></script>
     <script src="animate.js"></script>
     <script src="script.js"></script>
+    <script>
+        // Emergency Force Enter Button if stuck
+        setTimeout(() => {
+            const forceBtn = document.getElementById('forceEnterBtn');
+            if(forceBtn) forceBtn.style.display = 'block';
+        }, 5000); // Show after 5 seconds of loading
+    </script>
 </body>
 
 </html>

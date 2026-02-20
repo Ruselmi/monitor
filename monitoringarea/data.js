@@ -104,6 +104,34 @@ const CommodityData = {
         }
     },
 
+    // ========== COMMAND HELP ==========
+    commandHelp: [
+        { cmd: '/status', desc: 'Cek status sistem (CPU, RAM, Temp)' },
+        { cmd: '/sensors', desc: 'Lihat data sensor realtime' },
+        { cmd: '/health', desc: 'Cek kesehatan perangkat & baterai' },
+        { cmd: '/uptime', desc: 'Lama waktu sistem aktif' },
+        { cmd: '/log', desc: 'Lihat log aktivitas sistem' },
+        { cmd: '/alarm', desc: 'Cek status alarm keamanan' },
+        { cmd: '/stop', desc: 'Stop semua aktuator (Darurat)' },
+        { cmd: '/buzzer [ON/OFF]', desc: 'Kontrol buzzer manual' },
+        { cmd: '/threshold [nilai]', desc: 'Atur batas sensor' },
+        { cmd: '/mode [AUTO/MANUAL]', desc: 'Ganti mode operasi' },
+        { cmd: '/calibrate', desc: 'Kalibrasi sensor otomatis' },
+        { cmd: '/sleep', desc: 'Masuk mode hemat daya' },
+        { cmd: '/export', desc: 'Download data ke CSV' },
+        { cmd: '/reset', desc: 'Reset data lokal' },
+        { cmd: '/sendtg', desc: 'Kirim laporan ke Telegram' },
+        { cmd: '/history', desc: 'Lihat riwayat data sensor' },
+        { cmd: '/summary', desc: 'Ringkasan data harian' },
+        { cmd: '/wifi', desc: 'Info koneksi WiFi' },
+        { cmd: '/scanwifi', desc: 'Pindai jaringan sekitar' },
+        { cmd: '/netstat', desc: 'Status koneksi internet' },
+        { cmd: '/debug', desc: 'Info debug teknis' },
+        { cmd: '/restart', desc: 'Restart sistem ESP32' },
+        { cmd: '/update', desc: 'Cek update firmware OTA' },
+        { cmd: '/music', desc: 'Kontrol musik (/music play, stop, search)' }
+    ],
+
     // ========== COMMODITY CATEGORIES ==========
     categories: {
         komoditas: {
@@ -683,4 +711,3 @@ console.log('📦 Commodity Data loaded:', CommodityData.commodities.length, 'ko
     CommodityData.hamaDatabase?.length || 0, 'hama,',
     CommodityData.pupukDatabase?.length || 0, 'pupuk,',
     CommodityData.caraTanamDatabase?.length || 0, 'cara tanam');
-

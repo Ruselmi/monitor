@@ -58,6 +58,8 @@ const APIService = {
     // ========== ITUNES API ==========
     async searchMusic(query, limit = 20) {
         try {
+            if (!navigator.onLine) throw new Error('Offline');
+
             const params = new URLSearchParams({
                 term: query,
                 media: 'music',
@@ -67,8 +69,18 @@ const APIService = {
             });
 
             const url = `${this.config.itunesBaseUrl}/search?${params}`;
-            const response = await fetch(url);
+
+            // Timeout to prevent hanging
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+            const response = await fetch(url, { signal: controller.signal });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) throw new Error('API Error');
             const data = await response.json();
+
+            if (!data.results || data.results.length === 0) throw new Error('No results');
 
             return data.results.map(track => ({
                 id: track.trackId,
@@ -80,8 +92,22 @@ const APIService = {
                 duration: track.trackTimeMillis
             }));
         } catch (error) {
-            console.error('iTunes error:', error);
-            return [];
+            console.warn('iTunes API failed/offline, using mock data:', error);
+
+            // Mock Data for "Music On" even when offline
+            const mockSongs = [
+                { id: 1, name: 'Petani Makmur (Offline)', artist: 'Taniku Band', artwork: 'https://img.icons8.com/fluency/96/musical-notes.png', previewUrl: '' },
+                { id: 2, name: 'Lagu Panen Raya', artist: 'Suka Tani', artwork: 'https://img.icons8.com/fluency/96/musical-notes.png', previewUrl: '' },
+                { id: 3, name: 'Sawah Hijau', artist: 'Alam Desa', artwork: 'https://img.icons8.com/fluency/96/musical-notes.png', previewUrl: '' },
+                { id: 4, name: 'Burung Kutilang', artist: 'Lagu Anak', artwork: 'https://img.icons8.com/fluency/96/musical-notes.png', previewUrl: '' },
+                { id: 5, name: 'Tanah Airku', artist: 'Nasional', artwork: 'https://img.icons8.com/fluency/96/musical-notes.png', previewUrl: '' }
+            ];
+
+            if (query) {
+                const q = query.toLowerCase();
+                return mockSongs.filter(s => s.name.toLowerCase().includes(q) || s.artist.toLowerCase().includes(q));
+            }
+            return mockSongs;
         }
     },
 
@@ -412,4 +438,3 @@ const APIService = {
 
 window.APIService = APIService;
 console.log('📡 API Service loaded with 5+ external APIs');
-
